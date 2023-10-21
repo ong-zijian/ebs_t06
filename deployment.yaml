@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebst06-api
+  namespace: smu-team06
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebst06-api
+  template:
+    metadata:
+      labels:
+        app: ebst06-api
+    spec:
+      containers:
+      - name: ebst06-api
+        image: smuozj/ebst06backend:v1.4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4004
+          name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ebst06-api-service
+  labels:
+    app: ebst06-api
+spec:
+  ports:
+  - port: 4004
+    name: http
+    targetPort: 4004
+  selector:
+    app: ebst06-api
+---
+apiVersion: gateway.kyma-project.io/v1alpha1
+kind: APIRule
+metadata:
+  name: ebst06-api-rule
+  namespace: smu-team06
+spec:
+  gateway: kyma-gateway.kyma-system.svc.cluster.local
+  service:
+    name: ebst06-api-service
+    port: 4004
+    host: smu-team06-api
+  rules:
+    - path: /.*
+      methods: ["GET", "POST"]
+      mutators: []
+      accessStrategies:
+        - handler: noop
