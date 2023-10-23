@@ -51,7 +51,7 @@ spec:
   gateway: kyma-gateway.kyma-system.svc.cluster.local
   service:
     name: ebst06-api-service
-    port: 4004
+    port: 5000
   host: smu-team06-api
   rules:
     - path: /.*
