@@ -12,13 +12,20 @@ spec:
     metadata:
       labels:
         app: ebst06-api
+        version: v1
     spec:
       containers:
       - name: ebst06-api
         image: smuozj/ebst06backend:v1.4
         imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+          requests:
+            memory: 32Mi
         ports:
-        - containerPort: 4004
+        - containerPort: 5000
           name: http
 ---
 apiVersion: v1
@@ -29,13 +36,13 @@ metadata:
     app: ebst06-api
 spec:
   ports:
-  - port: 4004
+  - port: 5000
     name: http
-    targetPort: 4004
+    targetPort: 5000
   selector:
     app: ebst06-api
 ---
-apiVersion: gateway.kyma-project.io/v1alpha1
+apiVersion: gateway.kyma-project.io/v1beta1
 kind: APIRule
 metadata:
   name: ebst06-api-rule
@@ -45,7 +52,7 @@ spec:
   service:
     name: ebst06-api-service
     port: 4004
-    host: smu-team06-api
+  host: smu-team06-api
   rules:
     - path: /.*
       methods: ["GET", "POST"]
