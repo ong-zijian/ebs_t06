@@ -44,7 +44,7 @@ def get_response_from_gpt3(prompt):
     )
     return response.choices[0].text.strip()
 
-@app.route('/', methods=['GET'])
+@app.route('/test', methods=['GET'])
 def test():
     return "Hello World!"
 
@@ -76,6 +76,7 @@ def analyze_mood():
 def chat_endpoint():
     user_input = request.json.get('user_input')
     response = custom_chatbot_response(user_input)
+    template_res = "The input is of a person dealing with some mental issues. Please respond in an appropriate manner:"
 
     if response is None:  # If custom responses didn't match, use GPT-3
         response = get_response_from_gpt3(user_input)
