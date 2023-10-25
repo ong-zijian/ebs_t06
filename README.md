@@ -1,7 +1,7 @@
 # ebs_t06
 
 ## Current Image:
-current version of the image: smuozj/ebst06backend:v1.5
+current version of the image: smuozj/ebst06backend:v1.7
 
 ## Deployment Steps:
 - Edit the `deployment.yaml` image details if there is a new image
@@ -14,7 +14,7 @@ current version of the image: smuozj/ebst06backend:v1.5
 ## Run steps:
 ### Simple Hello World test route
 Use postman or even web browser for this.
-`https://smu-team06-api.ede20ab.kyma.ondemand.com/`
+`https://smu-team06-api.ede20ab.kyma.ondemand.com/test`
 
 ### Emotion detection
 - Go to Postman, use the `POST` method
