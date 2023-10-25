@@ -1,30 +1,25 @@
-# ebs_t06
+# Getting Started
 
-## Current Image:
-current version of the image: smuozj/ebst06backend:v1.5
+Welcome to your new project.
 
-## Deployment Steps:
-- Edit the `deployment.yaml` image details if there is a new image
-- Go to command prompt in the root directory and run (insert the api key on the "apikey" part)
-`kubectl create secret generic openai-secret--from-literal=OPENAI_KEY="apikey"`
-- Use the set context: `kubectl config set-context --current --namespace=smu-team06`
-- Check if you can see the pods: `kubectl get pods`
-- Run the command to deploy the kubernetes `kubectl apply -f ./deployment.yaml`
+It contains these folders and files, following our recommended project layout:
 
-## Run steps:
-### Simple Hello World test route
-Use postman or even web browser for this.
-`https://smu-team06-api.ede20ab.kyma.ondemand.com/`
-
-### Emotion detection
-- Go to Postman, use the `POST` method
-- insert this to the url `https://smu-team06-api.ede20ab.kyma.ondemand.com/mood`
-- for the body, select `raw`, then `JSON` and insert below, or use any text you like:
-`
-{
-    "mood":"Today was a terrible day."
-}
-`
+File or Folder | Purpose
+---------|----------
+`app/` | content for UI frontends goes here
+`db/` | your domain models and data go here
+`srv/` | your service models and code go here
+`package.json` | project metadata and configuration
+`readme.md` | this getting started guide
 
 
+## Next Steps
 
+- Open a new terminal and run `cds watch` 
+- (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
+- Start adding content, for example, a [db/schema.cds](db/schema.cds).
+
+
+## Learn More
+
+Learn more at https://cap.cloud.sap/docs/get-started/.
