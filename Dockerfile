@@ -22,10 +22,9 @@ RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 
 # Copy both Python files to the working directory
 COPY ./emotionDetection.py .
-COPY ./chatbot.py .
 
 # Expose port 5000 for the Flask app
 EXPOSE 5000
 
 # Run the Flask app for chatbot.py by default
-CMD ["python", "chatbot.py"]
+CMD ["python", "emotionDetection.py"]

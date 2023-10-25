@@ -8,6 +8,9 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import string
 
+import openai
+import os
+
 app = Flask(__name__)
 
 sid = SentimentIntensityAnalyzer()
@@ -19,6 +22,25 @@ def preprocess_text(text):
     processed_tokens = [ps.stem(token) for token in tokens if token not in stop_words and token not in string.punctuation]
     processed_text = ' '.join(processed_tokens)
     return processed_text
+
+def custom_chatbot_response(user_input):
+    print(request.json)
+    if "stress" in user_input.lower():
+        return "Why are you stressed? Do you need help?"
+    elif "suicidal" in user_input.lower() or "suicide" in user_input.lower():
+        # Future implementation: notify counselors
+        return ("If you are facing a mental health crisis, please call our Mental Health Helpline at 6389 2222 or "
+                "seek medical help at our 24-hour Emergency Services located in our hospital. All counselors will be notified as well.")
+    else:
+        return None 
+    
+def get_response_from_gpt3(prompt):
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=prompt,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
 
 @app.route('/', methods=['GET'])
 def test():
@@ -47,6 +69,18 @@ def analyze_mood():
             'overall_sentiment': overall_sentiment
         }
         return jsonify(response)
+    
+@app.route('/chatbot', methods=['POST'])
+def chat_endpoint():
+    user_input = request.json.get('user_input')
+    response = custom_chatbot_response(user_input)
+
+    if response is None:  # If custom responses didn't match, use GPT-3
+        response = get_response_from_gpt3(user_input)
+
+    print("Response to user:", response)  # Printing the response on server side
+
+    return jsonify({'response': response})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)

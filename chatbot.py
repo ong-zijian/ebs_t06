@@ -3,7 +3,7 @@ import openai
 import os
 
 # API-KEY
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+openai.api_key = os.environ.get("OPENAI_KEY")
 
 app = Flask(__name__)
 
@@ -40,4 +40,4 @@ def chat_endpoint():
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True
-    app.run(port=5000)
+    app.run(port=5001)
