@@ -13,6 +13,8 @@ import os
 
 app = Flask(__name__)
 
+openai.api_key = os.environ.get("OPENAI_KEY")
+
 sid = SentimentIntensityAnalyzer()
 stop_words = set(stopwords.words('english'))
 ps = PorterStemmer()
