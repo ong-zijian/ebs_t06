@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ebst06-api
-        image: smuozj/ebst06backend:v1.4
+        image: smuozj/ebst06backend:v1.5
         imagePullPolicy: Always
         resources:
           limits:
@@ -27,6 +27,12 @@ spec:
         ports:
         - containerPort: 5000
           name: http
+        env:
+        - name: OPENAI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-secret
+              key: OPENAI_KEY
 ---
 apiVersion: v1
 kind: Service
