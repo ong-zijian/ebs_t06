@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ebst06-api
-        image: smuozj/ebst06backend:v1.6
+        image: smuozj/ebst06backend:v1.7
         imagePullPolicy: Always
         resources:
           limits:

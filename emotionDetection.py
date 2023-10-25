@@ -79,7 +79,7 @@ def chat_endpoint():
     template_res = "The input is of a person dealing with some mental issues. Please respond in an appropriate manner:"
 
     if response is None:  # If custom responses didn't match, use GPT-3
-        response = get_response_from_gpt3(user_input)
+        response = get_response_from_gpt3(template_res + user_input)
 
     print("Response to user:", response)  # Printing the response on server side
 
