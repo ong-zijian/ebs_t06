@@ -2,3 +2,5 @@ Flask==3.0.0
 Flask-Cors==3.0.10
 nltk==3.8.1
 openai==0.10.2
+Flask-PyMongo==2.3.0
+pymongo==4.3.3
