@@ -33,6 +33,11 @@ spec:
             secretKeyRef:
               name: openai-secret
               key: OPENAI_KEY
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: MONGO_URI
 ---
 apiVersion: v1
 kind: Service
