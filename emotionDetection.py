@@ -20,7 +20,7 @@ app = Flask(__name__)
 
 # API keys
 openai.api_key = os.environ.get("OPENAI_KEY")
-mongo_uri = os.environ.get("MONGO_DB_URI")
+mongo_uri = os.environ.get("MONGO_URI")
 
 # MongoDB connection
 client = MongoClient(mongo_uri)
