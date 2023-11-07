@@ -1,6 +1,7 @@
 // Import the functions you need from vue-router
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '../components/MainPage.vue';
+import CreateJournal from '../components/CreateJournal.vue';
 
 // Define your routes
 const routes = [
@@ -9,6 +10,11 @@ const routes = [
     name: 'MainPage',
     component: MainPage
   },
+  {
+    path: '/CreateJournal',
+    name: 'CreateJournal',
+    component: CreateJournal
+  }
   // ... other routes
 ];
 

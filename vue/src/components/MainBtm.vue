@@ -8,7 +8,7 @@
     </div>
     <div class="nav-item plus-icon">
       <!-- The Plus button is aligned with the other items but has a margin-top to offset it upwards -->
-      <div class="plus">+</div>
+      <router-link to="/CreateJournal" class="plus">+</router-link>
     </div>
     <div class="nav-item">
       <img src="https://cdn-icons-png.flaticon.com/512/55/55281.png" alt="Calendar" />
@@ -62,5 +62,6 @@
   align-items: center;
   font-size: 24px; /* Size of plus symbol */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+  text-decoration: none;
 }
 </style>
