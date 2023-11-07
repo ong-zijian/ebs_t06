@@ -6,15 +6,33 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
-import string
 
+from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
+from pymongo import MongoClient
+from datetime import datetime
+
+import string
 import openai
 import os
 
 app = Flask(__name__)
 
+# API keys
 openai.api_key = os.environ.get("OPENAI_KEY")
+mongo_uri = os.environ.get("MONGO_URI")
 
+# MongoDB connection
+client = MongoClient(mongo_uri)
+db = client['EBS']
+
+# List of collection
+students_collection = db['student']
+counsellors_collection = db['counsellor']
+bookings_collection = db['booking']
+emotion_collection = db['emotion']
+
+# Sentiment analysis classes
 sid = SentimentIntensityAnalyzer()
 stop_words = set(stopwords.words('english'))
 ps = PorterStemmer()
@@ -84,6 +102,144 @@ def chat_endpoint():
     print("Response to user:", response)  # Printing the response on server side
 
     return jsonify({'response': response})
+
+
+########################################################################################################################
+## Student Collection
+@app.route('/students', methods=['GET'])
+def get_all_students():
+    students = list(students_collection.find({}))
+    for student in students:
+        student['_id'] = str(student['_id'])
+    return jsonify(students)
+
+@app.route('/student/<object_id>', methods=['GET'])
+def get_student_by_id(object_id):
+    try:
+        student = students_collection.find_one({"_id": ObjectId(object_id)})
+        if student:
+            student['_id'] = str(student['_id'])
+            return jsonify(student)
+        else:
+            return jsonify({"error": "Student not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route('/student', methods=['POST'])
+def create_student():
+    try:
+        data = request.json
+        student_id = students_collection.insert_one(data).inserted_id
+        return jsonify({"_id": str(student_id)}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+########################################################################################################################
+## Counsellor Collection
+@app.route('/counsellors', methods=['GET'])
+def get_all_counsellor():
+    counsellors = list(counsellors_collection.find({}))
+    for counsellor in counsellors:
+        counsellor['_id'] = str(counsellor['_id'])
+    return jsonify(counsellors)
+
+@app.route('/counsellor/<object_id>', methods=['GET'])
+def get_counsellor_by_id(object_id):
+    try:
+        counsellor = counsellors_collection.find_one({"_id": ObjectId(object_id)})
+        if counsellor:
+            counsellor['_id'] = str(counsellor['_id'])
+            return jsonify(counsellor)
+        else:
+            return jsonify({"error": "Counsellor not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route('/counsellor', methods=['POST'])
+def create_counsellor():
+    try:
+        data = request.json
+        counsellor_id = counsellors_collection.insert_one(data).inserted_id
+        return jsonify({"_id": str(counsellor_id)}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+########################################################################################################################
+## Booking Collection
+@app.route('/bookings', methods=['GET'])
+def get_all_bookings():
+    bookings = list(bookings_collection.find({}))
+    for booking in bookings:
+        booking['_id'] = str(booking['_id'])
+        booking['cid'] = str(booking['cid'])
+        booking['sid'] = str(booking['sid'])
+    return jsonify(bookings)
+
+@app.route('/booking/<object_id>', methods=['GET'])
+def get_booking_by_id(object_id):
+    try:
+        booking = bookings_collection.find_one({"_id": ObjectId(object_id)})
+        if booking:
+            booking['_id'] = str(booking['_id'])
+            booking['cid'] = str(booking['cid'])
+            booking['sid'] = str(booking['sid'])
+            return jsonify(booking)
+        else:
+            return jsonify({"error": "Booking not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route('/booking', methods=['POST'])
+def create_booking():
+    try:
+        data = request.json
+        booking_id = bookings_collection.insert_one(data).inserted_id
+        return jsonify({"_id": str(booking_id)}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+########################################################################################################################
+## Emotion Collection
+@app.route('/emotion/<object_id>', methods=['GET'])
+def get_emotion_by_id(object_id):
+    try:
+        emotion = emotion_collection.find_one({"sid": ObjectId(object_id)})
+        if emotion:
+            emotion['_id'] = str(emotion['_id'])
+            emotion['sid'] = str(emotion['sid'])
+            return jsonify(emotion)
+        else:
+            return jsonify({"error": "Emotion not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route('/emotion/add/<object_id>/<float:score>', methods=['POST'])
+def add_emotion_array_item(object_id, score):
+    try:
+        current_date = datetime.now().date().isoformat()
+        new_item = {
+            "date": current_date,
+            "score": score 
+        }
+
+        # Updating the MongoDB document using $push
+        result = emotion_collection.update_one(
+            {"sid": ObjectId(object_id)},
+            {"$push": {"score": new_item}}
+        )
+
+        # Checking if any document got updated
+        if result.modified_count > 0:
+            return jsonify({"message": "Array item added successfully"})
+        else:
+            return jsonify({"error": "No matching document found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
