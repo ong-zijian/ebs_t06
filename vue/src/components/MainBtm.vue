@@ -4,7 +4,9 @@
       <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" />
     </div>
     <div class="nav-item">
-      <img src="https://w7.pngwing.com/pngs/983/399/png-transparent-computer-icons-internet-bot-robot-robot-thumbnail.png" alt="Chat" />
+      <router-link to="/chatBot">
+        <img src="https://w7.pngwing.com/pngs/983/399/png-transparent-computer-icons-internet-bot-robot-robot-thumbnail.png" alt="Chat" />
+      </router-link>
     </div>
     <div class="nav-item plus-icon">
       <!-- The Plus button is aligned with the other items but has a margin-top to offset it upwards -->

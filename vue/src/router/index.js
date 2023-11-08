@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '../components/MainPage.vue';
 import CreateJournal from '../components/CreateJournal.vue';
+import chatBot from '../components/chatBot.vue';
 
 // Define your routes
 const routes = [
@@ -14,6 +15,11 @@ const routes = [
     path: '/CreateJournal',
     name: 'CreateJournal',
     component: CreateJournal
+  },
+  {
+    path: '/chatBot',
+    name: 'chatBot',
+    component: chatBot
   }
   // ... other routes
 ];
