@@ -5,7 +5,9 @@
     </div>
     <div class="nav-item">
       <router-link to="/chatBot">
-        <img src="https://w7.pngwing.com/pngs/983/399/png-transparent-computer-icons-internet-bot-robot-robot-thumbnail.png" alt="Chat" />
+        <img
+          src="https://w7.pngwing.com/pngs/983/399/png-transparent-computer-icons-internet-bot-robot-robot-thumbnail.png"
+          alt="Chat" />
       </router-link>
     </div>
     <div class="nav-item plus-icon">
@@ -13,7 +15,9 @@
       <router-link to="/CreateJournal" class="plus">+</router-link>
     </div>
     <div class="nav-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/55/55281.png" alt="Calendar" />
+      <router-link to="/CouselorPage">
+        <img src="https://cdn-icons-png.flaticon.com/512/55/55281.png" alt="Calendar" />
+      </router-link>
     </div>
     <div class="nav-item">
       <img src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Profile" />
@@ -27,7 +31,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  background-color: #f2f2f2; /* Background color of the bar */
+  background-color: #f2f2f2;
+  /* Background color of the bar */
   position: relative;
 }
 
@@ -37,7 +42,8 @@
 }
 
 .nav-item img {
-  width: 24px; /* Size of icons */
+  width: 24px;
+  /* Size of icons */
   height: 24px;
 }
 
@@ -54,16 +60,19 @@
 }
 
 .plus {
-  width: 40px; /* Size of plus icon */
+  width: 40px;
+  /* Size of plus icon */
   height: 40px;
-  background-color: #4CAF50; /* Color of plus button */
+  background-color: #4CAF50;
+  /* Color of plus button */
   border-radius: 50%;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px; /* Size of plus symbol */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+  font-size: 24px;
+  /* Size of plus symbol */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  /* Optional shadow for depth */
   text-decoration: none;
-}
-</style>
+}</style>
