@@ -10,14 +10,14 @@
                 <input type="text" v-model="searchTerm" placeholder="Search" />
             </div>
             <div class="counselor-list">
-                <div v-for="counselor in filteredCounselors" :key="counselor.id" class="counselor-item"
-                    @click="goToCounselorProfile(counselor.id)">
+                <div v-for="counselor in counsellors" :key="counselor._id" class="counselor-item"
+                    @click="goToCounselorProfile(counselor._id)">
                     <div class="profile-photo">
                         <img v-if="counselor && counselor.photo" :src="counselor.photo"
                             :alt="`Photo of ${counselor.name}`" />
                     </div>
                     <div class="profile-info">
-                        <h2>{{ counselor.name }}</h2>
+                        <h2>{{ counselor.fname }} {{ counselor.lname }}</h2>
                         <p>{{ counselor.description }}</p>
                         <div class="rating">
                             <!-- Replace with your star-rating component -->
@@ -41,7 +41,7 @@ export default {
     data() {
         return {
             searchTerm: '',
-            counselors: [], // Start with an empty array
+            counsellors: [], // Start with an empty array
         };
     },
     created() {
@@ -50,10 +50,11 @@ export default {
     methods: {
         fetchCounselors() {
             // Make sure the URL matches your Flask route
-            axios.get('http://localhost:5000/api/counselors')
+            axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/counsellors')
                 .then(response => {
                     // Assume the response data is an array of counselors
-                    this.counselors = response.data;
+                    this.counsellors = response.data;
+                    console.log('Counselors:', this.counsellors);
                 })
                 .catch(error => {
                     console.error('Error fetching counselors:', error);
