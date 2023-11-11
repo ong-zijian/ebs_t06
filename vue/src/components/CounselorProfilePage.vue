@@ -16,7 +16,8 @@
         <p class="counselor-title">{{ counselor?.title }}</p>
         <p class="counselor-description">{{ counselor?.description }}</p>
         <StarRating :rating="counselor?.rating" />
-        <button class="schedule-btn" @click="scheduleAppointment">Schedule Appointment</button>
+        <!-- <button class="schedule-btn" @click="scheduleAppointment">Schedule Appointment</button> -->
+        <ScheduleAppointment :counselor-id="counselorId" />
       </div>
     </div>
     <div v-else-if="loading">
@@ -32,17 +33,20 @@
 <script>
 import axios from 'axios';
 import StarRating from './StarRating.vue';
+import ScheduleAppointment from './ScheduleAppointment.vue';
 
 export default {
   name: 'CounselorProfile',
   components: {
-    StarRating
+    StarRating,
+    ScheduleAppointment
   },
   data() {
     return {
       counselor: null,
       loading: true,
       error: null,
+      counselorID:null
     };
   },
   props: {
@@ -56,9 +60,11 @@ export default {
   },
   methods: {
     fetchCounselorData() {
-      axios.get(`http://localhost:5000/api/counselor/${this.counselorId}`)
+      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/counsellor/${this.counselorId}`)
         .then(response => {
           this.counselor = response.data;
+          this.counselorID = this.counselor._id;
+          console.log('Counselor:', this.counselor)
           this.loading = false;
         })
         .catch(error => {

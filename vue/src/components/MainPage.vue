@@ -91,34 +91,36 @@ export default {
     this.getUserProfile();
   },
   mounted() {
-    const ctx = document.getElementById('scoreChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: this.plotData,
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
+    this.$nextTick(() => {
+      const ctx = document.getElementById('scoreChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: this.plotData,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid:{
+                display: false
+              }
+            }
+          },
+          x:{
             grid:{
               display: false
             }
-          }
-        },
-        x:{
-          grid:{
-            display: false
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
           }
         }
-      }
+      });
     });
     // Set up dimensions for the word cloud SVG
-    let width = 500;
-    let height = 500;
+    let width = 400;
+    let height = 400;
 
     // Select the container in which to append the SVG
     let svg = d3.select(this.$refs.wordcloud).append("svg")
@@ -198,20 +200,24 @@ export default {
       console.log(this.plotData);
     },
     createWordFrequencyArray(journalEntries) {
-      let allDescriptions = journalEntries.map(entry => entry.description).join(" ");
-      let wordArray = allDescriptions.split(/\s+/);
+      if (!journalEntries){
+        return [];
+      } else {
+        let allDescriptions = journalEntries.map(entry => entry.description).join(" ");
+        let wordArray = allDescriptions.split(/\s+/);
 
-      let wordFrequency = wordArray.reduce((accumulator, word) => {
-        let cleanedWord = word.replace(/[^\w\s]|_/g, "").toLowerCase();
-        if (cleanedWord && cleanedWord.length > 3) { // skip short words
-          accumulator[cleanedWord] = (accumulator[cleanedWord] || 0) + 1;
-        }
-        return accumulator;
-      }, {});
+        let wordFrequency = wordArray.reduce((accumulator, word) => {
+          let cleanedWord = word.replace(/[^\w\s]|_/g, "").toLowerCase();
+          if (cleanedWord && cleanedWord.length > 3) { // skip short words
+            accumulator[cleanedWord] = (accumulator[cleanedWord] || 0) + 1;
+          }
+          return accumulator;
+        }, {});
 
-      return Object.keys(wordFrequency).map(word => {
-        return { text: word, size: wordFrequency[word] };
-      });
+        return Object.keys(wordFrequency).map(word => {
+          return { text: word, size: wordFrequency[word] };
+        });
+      }
     }
   },
   // ...
