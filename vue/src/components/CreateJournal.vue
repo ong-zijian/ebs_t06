@@ -5,19 +5,23 @@
       <h1>Journal</h1>
       <span class="logout-btn">Logout</span>
     </header>
+    <div v-if="user">
+      <section class="user-profile">
+        <div class="avatar-container">
+          <img :src="avatar" :alt="user.fname" class="user-avatar" />
+        </div>
+        <h2 class="user-name">{{ user.fname }} {{ user.lname }}</h2>
+        <p class="user-location">{{ user.location }}</p>
+      </section>
 
-    <section class="user-profile">
-      <div class="avatar-container">
-        <img :src="user.avatar" :alt="user.name" class="user-avatar" />
-      </div>
-      <h2 class="user-name">{{ user.name }}</h2>
-      <p class="user-location">{{ user.location }}</p>
-    </section>
-
-    <section class="journal-entry">
-      <input type="text" v-model="journalEntry.title" placeholder="Title" class="entry-title" />
-      <textarea v-model="journalEntry.content" placeholder="Journal" class="entry-content"></textarea>
-    </section>
+      <section class="journal-entry">
+        <input type="text" v-model="journalEntry.title" placeholder="Title" class="entry-title" />
+        <textarea v-model="journalEntry.content" placeholder="Journal" class="entry-content"></textarea>
+      </section>
+    </div>
+    <div v-else>
+      ...
+    </div>
 
     <footer>
       <button class="cancel-btn">Cancel</button>
@@ -27,22 +31,31 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'JournalApp',
   data() {
     return {
-      user: {
-        name: 'Sarah Thompson',
-        location: 'Singapore',
-        avatar: 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png', // Replace with actual path to the new avatar image
-      },
+      avatar: 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png',
       journalEntry: {
         title: '',
         content: ''
-      }
+      },
+      user: null
     }
   },
+  created() {
+    this.userProfile();
+  },
   methods: {
+    userProfile(){
+        axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/65449c50032028ae33e59d15')
+        .then(response => {
+          this.user = response.data;
+          console.log(this.user);
+        })
+    },
     submitEntry() {
       // Handle the journal entry submission
       console.log("Title:", this.journalEntry.title);
