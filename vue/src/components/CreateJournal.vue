@@ -16,7 +16,7 @@
 
       <section class="journal-entry">
         <input type="text" v-model="journalEntry.title" placeholder="Title" class="entry-title" />
-        <textarea v-model="journalEntry.content" placeholder="Journal" class="entry-content"></textarea>
+        <textarea v-model="journalEntry.description" placeholder="Journal" class="entry-content"></textarea>
       </section>
     </div>
     <div v-else>
@@ -39,8 +39,9 @@ export default {
     return {
       avatar: 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png',
       journalEntry: {
+        object_id: '',
         title: '',
-        content: ''
+        description: ''
       },
       user: null
     }
@@ -50,17 +51,22 @@ export default {
   },
   methods: {
     userProfile(){
-        axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/65449c50032028ae33e59d15')
+        axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/6544938b2b6d90d7618c3647')
         .then(response => {
           this.user = response.data;
+          this.journalEntry.object_id = this.user._id;
           console.log(this.user);
         })
     },
     submitEntry() {
       // Handle the journal entry submission
-      console.log("Title:", this.journalEntry.title);
-      console.log("Content:", this.journalEntry.content);
+      // console.log("Title:", this.journalEntry.title);
+      // console.log("Content:", this.journalEntry.content);
       // You would typically send this data to a server here
+      axios.post(`https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/add`, this.journalEntry)
+      .then(response => {
+        console.log(response);
+      }) 
     }
   }
 }
