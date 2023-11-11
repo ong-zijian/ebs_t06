@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "gh-pages": "^6.0.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0"
   }
 }
