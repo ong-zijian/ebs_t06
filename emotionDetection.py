@@ -180,7 +180,7 @@ def get_all_bookings():
 @app.route('/booking/<object_id>', methods=['GET'])
 def get_booking_by_id(object_id):
     try:
-        booking = bookings_collection.find_one({"sid": ObjectId(object_id)})
+        booking = bookings_collection.find_one({"cid": object_id})
         if booking:
             booking['_id'] = str(booking['_id'])
             booking['cid'] = str(booking['cid'])
