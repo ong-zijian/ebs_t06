@@ -1,7 +1,9 @@
 <template>
   <div class="navigation-bar">
     <div class="nav-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" />
+      <router-link to="/">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" />
+      </router-link>
     </div>
     <div class="nav-item">
       <router-link to="/chatBot">
@@ -15,7 +17,7 @@
       <router-link to="/CreateJournal" class="plus">+</router-link>
     </div>
     <div class="nav-item">
-      <router-link to="/CouselorPage">
+      <router-link to="/CounselorPage">
         <img src="https://cdn-icons-png.flaticon.com/512/55/55281.png" alt="Calendar" />
       </router-link>
     </div>
@@ -75,4 +77,5 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   /* Optional shadow for depth */
   text-decoration: none;
-}</style>
+}
+</style>
