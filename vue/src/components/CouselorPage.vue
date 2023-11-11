@@ -70,7 +70,9 @@ export default {
                 counselor.name.toLowerCase().includes(this.searchTerm.toLowerCase())
             );
         },
+        
     },
+    
 };
 </script>
 <style>
