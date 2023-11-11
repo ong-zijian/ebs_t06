@@ -1,7 +1,9 @@
 <template>
   <div class="navigation-bar">
     <div class="nav-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" />
+      <router-link to="/">
+        <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" />
+      </router-link>
     </div>
     <div class="nav-item">
       <router-link to="/chatBot">
