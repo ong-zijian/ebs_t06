@@ -76,24 +76,25 @@ export default {
           };
 
           // Post the booking details to the server
-          const response = await axios.post('http://localhost:5000/booking', bookingDetails);
+          const response = await axios.post('https://smu-team06-api.ede20ab.kyma.ondemand.com/booking', bookingDetails);
           console.log('Server response:', response.data);
           
           if(response){
             console.log('response:', response.data._id);
             const jitsiMeetURL = `https://meet.jit.si/${encodeURIComponent('Telemed-Session-' + response.data._id)}`;
-            await axios.put(`http://localhost:5000/booking/${response.data._id}`, {
+            const putComplete = await axios.put(`https://smu-team06-api.ede20ab.kyma.ondemand.com/booking/${response.data._id}`, {
               video: jitsiMeetURL
             });
             bookingDetails.video = jitsiMeetURL;
-
-            this.appointments.push({
-            start: bookingDetails.sDateTime,
-            end: bookingDetails.eDateTime,
-            video: bookingDetails.video,
-            title: 'New Appointment',
-            class: 'bg-primary text-white'
-            });
+            if(putComplete){
+              this.appointments.push({
+              start: bookingDetails.sDateTime,
+              end: bookingDetails.eDateTime,
+              video: bookingDetails.video,
+              title: 'New Appointment',
+              class: 'bg-primary text-white'
+              });
+            }
             window.location.reload();
           }
         } else {
@@ -104,7 +105,7 @@ export default {
       }
     },
     getAppointmentbyCounselor(){
-      axios.get(`http://localhost:5000/booking/${this.counselorId}`)
+      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/booking/${this.counselorId}`)
       .then(response => {
         this.appt = response.data;
         console.log('appt:', this.appt)
