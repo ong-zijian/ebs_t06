@@ -131,9 +131,7 @@ export default {
     },
 
     promptForBookingDetails(date) {
-      // This is a mock-up logic for a confirmation dialog
       return new Promise((resolve) => {
-        // Using the browser's confirm dialog to ask the user to confirm the booking
         const userConfirmed = confirm(`Confirm booking on ${date.toLocaleString()} for 1 hour?`);
         resolve(userConfirmed);
       });
