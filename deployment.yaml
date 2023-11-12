@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ebst06-api
-        image: smuozj/ebst06backend:v2.3
+        image: smuozj/ebst06backend:v2.4
         imagePullPolicy: Always
         resources:
           limits:
@@ -66,7 +66,7 @@ spec:
   host: smu-team06-api
   rules:
     - path: /.*
-      methods: ["GET", "POST"]
+      methods: ["GET", "POST", "PUT"]
       mutators: []
       accessStrategies:
         - handler: noop

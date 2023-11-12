@@ -15,6 +15,7 @@ from datetime import datetime
 import string
 import openai
 import os
+import json
 
 app = Flask(__name__)
 
@@ -180,14 +181,24 @@ def get_all_bookings():
 @app.route('/booking/<object_id>', methods=['GET'])
 def get_booking_by_id(object_id):
     try:
-        booking = bookings_collection.find_one({"cid": object_id})
-        if booking:
-            booking['_id'] = str(booking['_id'])
-            booking['cid'] = str(booking['cid'])
-            booking['sid'] = str(booking['sid'])
-            return jsonify(booking)
+        # Find all bookings with the given cid
+        booking_cursor = bookings_collection.find({"cid": object_id})
+        bookings_list = list(booking_cursor)
+
+        if bookings_list:
+            # Convert ObjectId and datetime to strings
+            for booking in bookings_list:
+                booking['_id'] = str(booking['_id'])
+                booking['cid'] = str(booking['cid'])
+                booking['sid'] = str(booking['sid'])
+                # Convert datetime to ISO format string
+                booking['sDateTime'] = booking['sDateTime'].isoformat()
+                booking['eDateTime'] = booking['eDateTime'].isoformat()
+            
+            # Return the list of bookings
+            return jsonify(bookings_list)
         else:
-            return jsonify({"error": "Booking not found"}), 404
+            return jsonify({"error": "No bookings found with that ID"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
@@ -195,8 +206,34 @@ def get_booking_by_id(object_id):
 def create_booking():
     try:
         data = request.json
+        
+        data['cid'] = str(data['cid'])
+        data['sid'] = str(data['sid'])
+        
+        # Parse the ISO date strings to datetime objects
+        data['sDateTime'] = datetime.fromisoformat(data['sDateTime'].rstrip('Z'))
+        data['eDateTime'] = datetime.fromisoformat(data['eDateTime'].rstrip('Z'))
+
+        # Insert
         booking_id = bookings_collection.insert_one(data).inserted_id
+
         return jsonify({"_id": str(booking_id)}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/booking/<booking_id>', methods=['PUT'])
+def update_booking(booking_id):
+    try:
+        data = request.json
+        result = bookings_collection.update_one(
+            {"_id": ObjectId(booking_id)}, 
+            {"$set": data}
+        )
+
+        if result.matched_count:
+            return jsonify({"success": True}), 200
+        else:
+            return jsonify({"error": "Booking not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

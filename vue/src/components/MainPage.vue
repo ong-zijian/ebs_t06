@@ -30,10 +30,10 @@
         <p class="text-center">{{ userMessage }}</p>
       </div>
       <div class="card shadow mb-4">
-        <canvas id="scoreChart"></canvas>
+        <EmotionScoreChart :plot-data="plotData"/>
       </div>
-      <div ref="wordcloud"></div>
-      <div class="content" v-if="journalMessages">
+      <WordCloud v-if="journalMessages && journalMessages.journal.length" :journal-entries="journalMessages.journal"/>
+      <div class="content" v-if="journalMessages.journal && journalMessages.journal.length">
         <div class="message-card shadow" v-for="message in journalMessages.journal" :key="message._id">
           <div class="row inline">
             <h2>{{ message.title }}</h2>  
@@ -57,20 +57,13 @@
 
 <script>
 import axios from 'axios';
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
-import * as d3 from 'd3';
-import d3Cloud from 'd3-cloud';
+import EmotionScoreChart from './EmotionScoreChart.vue';
+import WordCloud from './WordCloud.vue';
 
 export default {
   data() {
     return {
-      // messages: [
-      //   { id: 1, title: 'Tiring Day', content: 'Today was a tiring day for me. omg, I need to rant about...' },
-      //   { id: 2, title: 'V tired', content: 'zzz' },
-      //   // Add more message objects here
-      // ],
-      journalMessages: null,
+      journalMessages: { journal: [] },
       userProfileImage: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
       user: null,
       plotData: {
@@ -86,78 +79,13 @@ export default {
       messageToUser:["Keep it up and carry on the positivity!", "Not everyday is special, but you are doing great!", "Today might not be the best but it will get better!"]
     };
   },
+  components: {
+    EmotionScoreChart,
+    WordCloud
+  },
   created() {
     this.getAllJournal();
     this.getUserProfile();
-  },
-  mounted() {
-    this.$nextTick(() => {
-      const ctx = document.getElementById('scoreChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: this.plotData,
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid:{
-                display: false
-              }
-            }
-          },
-          x:{
-            grid:{
-              display: false
-            }
-          },
-          plugins: {
-            legend: {
-              display: false
-            }
-          }
-        }
-      });
-    });
-    // Set up dimensions for the word cloud SVG
-    let width = 400;
-    let height = 400;
-
-    // Select the container in which to append the SVG
-    let svg = d3.select(this.$refs.wordcloud).append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-    // Prepare the word data for the word cloud
-    let wordCloudData = this.createWordFrequencyArray(this.journalMessages.journal);
-
-    // Set up the size scale for the word cloud
-    let sizeScale = d3.scaleLinear()
-      .domain([0, d3.max(wordCloudData, d => d.size)])
-      .range([10, 100]); // Adjust min and max font sizes as needed
-
-    // Create the word cloud layout and draw
-    let layout = d3Cloud()
-      .size([width, height])
-      .words(wordCloudData)
-      .padding(5)
-      .rotate(() => 0) // Rotation of words; adjust as needed
-      .font("Impact")
-      .fontSize(d => sizeScale(d.size))
-      .on("end", words => {
-        svg.selectAll("text")
-          .data(words)
-          .enter().append("text")
-          .style("font-size", d => d.size + "px")
-          .style("fill", "#000") // Set the text color
-          .attr("text-anchor", "middle")
-          .attr("transform", d => `translate(${d.x}, ${d.y})rotate(${d.rotate})`)
-          .text(d => d.text);
-      });
-
-    // Start the layout calculation
-    layout.start();
   },
   computed:{
     userMessage() {
@@ -179,7 +107,7 @@ export default {
         this.messages = response.data;
         this.journalMessages = this.messages;
         this.preparePlotData();
-        console.log(this.messages);
+        //console.log(this.messages);
       })
     },
     async getUserProfile(){
@@ -191,36 +119,17 @@ export default {
       })
     },
     preparePlotData() {
-      const sortedScores = this.journalMessages.score.sort((a, b) => new Date(a.date) - new Date(b.date));
-      const scoresToPlot = sortedScores.slice(-7); // Get the last 7 scores
-      
-      // Update plotData with the scores and dates
-      this.plotData.labels = scoresToPlot.map(entry => entry.date);
-      this.plotData.datasets[0].data = scoresToPlot.map(entry => entry.score * 5);
-      console.log(this.plotData);
-    },
-    createWordFrequencyArray(journalEntries) {
-      if (!journalEntries){
-        return [];
-      } else {
-        let allDescriptions = journalEntries.map(entry => entry.description).join(" ");
-        let wordArray = allDescriptions.split(/\s+/);
-
-        let wordFrequency = wordArray.reduce((accumulator, word) => {
-          let cleanedWord = word.replace(/[^\w\s]|_/g, "").toLowerCase();
-          if (cleanedWord && cleanedWord.length > 3) { // skip short words
-            accumulator[cleanedWord] = (accumulator[cleanedWord] || 0) + 1;
-          }
-          return accumulator;
-        }, {});
-
-        return Object.keys(wordFrequency).map(word => {
-          return { text: word, size: wordFrequency[word] };
-        });
+      if (this.journalMessages && Array.isArray(this.journalMessages.score)) {
+        const sortedScores = this.journalMessages.score.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const scoresToPlot = sortedScores.slice(-7); // Get the last 7 scores
+        
+        // Update plotData with the scores and dates
+        this.plotData.labels = scoresToPlot.map(entry => entry.date);
+        this.plotData.datasets[0].data = scoresToPlot.map(entry => entry.score * 5);
+        console.log(this.plotData);
       }
-    }
+    },
   },
-  // ...
 };
 </script>
 
