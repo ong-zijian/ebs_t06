@@ -49,55 +49,55 @@ export default {
     };
   },
   methods: {
-    // renderMessageToScreen(args) {
-    //   const displayDate = (args.time || this.getCurrentTimestamp()).toLocaleString('en-IN', {
-    //     month: 'short',
-    //     day: 'numeric',
-    //     hour: 'numeric',
-    //     minute: 'numeric',
-    //   });
-    //   const messagesContainer = this.$el.querySelector('.messages'); // Use Vue's ref feature
+    renderMessageToScreen(args) {
+      const displayDate = (args.time || this.getCurrentTimestamp()).toLocaleString('en-IN', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      });
+      const messagesContainer = this.$el.querySelector('.messages'); // Use Vue's ref feature
 
-    //   // Create a new message element
-    //   const message = document.createElement('li');
-    //   message.className = `message ${args.message_side}`;
+      // Create a new message element
+      const message = document.createElement('li');
+      message.className = `message ${args.message_side}`;
 
-    //   // Create the text wrapper element
-    //   const textWrapper = document.createElement('div');
-    //   textWrapper.className = 'text_wrapper';
+      // Create the text wrapper element
+      const textWrapper = document.createElement('div');
+      textWrapper.className = 'text_wrapper';
 
-    //   // Create the text element
-    //   const text = document.createElement('div');
-    //   text.className = 'text';
-    //   text.textContent = args.text;
+      // Create the text element
+      const text = document.createElement('div');
+      text.className = 'text';
+      text.textContent = args.text;
 
-    //   // Create the timestamp element
-    //   const timestamp = document.createElement('div');
-    //   timestamp.className = 'timestamp';
-    //   timestamp.textContent = displayDate;
+      // Create the timestamp element
+      const timestamp = document.createElement('div');
+      timestamp.className = 'timestamp';
+      timestamp.textContent = displayDate;
 
-    //   // Append the elements to the message
-    //   textWrapper.appendChild(text);
-    //   textWrapper.appendChild(timestamp);
-    //   message.appendChild(textWrapper);
+      // Append the elements to the message
+      textWrapper.appendChild(text);
+      textWrapper.appendChild(timestamp);
+      message.appendChild(textWrapper);
 
-    //   // Append the message to the parent
-    //   messagesContainer.appendChild(message);
+      // Append the message to the parent
+      messagesContainer.appendChild(message);
 
-    //   // Perform animations
-    //   setTimeout(() => {
-    //     message.classList.add('appeared');
-    //   }, 0);
+      // Perform animations
+      setTimeout(() => {
+        message.classList.add('appeared');
+      }, 0);
 
-    //   // Scroll to the bottom of the chat window
-    //   messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    // },
+      // Scroll to the bottom of the chat window
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    },
     sendMessage() {
       // Your existing send message logic...
       // User sends a message
       console.log("Before sending message: ", this.message);
       this.showUserMessage(this.message, new Date());
-      console.log("test message: ", this.message);
+      console.log("test message: ", this.messages);
 
       // Make the botKyma() request with the user's input
       this.botKyma(this.message)
@@ -117,7 +117,6 @@ export default {
       return axios
         .post("https://smu-team06-api.ede20ab.kyma.ondemand.com/chatbot", {
           user_input: userInput,
-          user_id:"6544938b2b6d90d7618c3647"
         })
         .then(response => {
           // Return the bot's response

@@ -22,7 +22,9 @@
       </router-link>
     </div>
     <div class="nav-item">
-      <img src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Profile" />
+      <router-link to="/profile">
+        <img src="https://cdn-icons-png.flaticon.com/512/3106/3106773.png" alt="Profile" />
+      </router-link>
     </div>
   </div>
 </template>
