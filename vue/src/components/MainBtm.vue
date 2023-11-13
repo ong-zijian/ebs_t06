@@ -36,10 +36,12 @@
   align-items: center;
   padding: 10px 0;
   background-color: #f2f2f2;
-  /* Background color of the bar */
-  position: relative;
+  position: fixed; /* Set the position to fixed */
+  bottom: 0; /* Position it at the bottom of the viewport */
+  width: 100%; /* Occupy full width */
 }
 
+/* Remove relative positioning from .navigation-bar */
 .nav-item {
   flex: 1;
   text-align: center;
@@ -47,37 +49,27 @@
 
 .nav-item img {
   width: 24px;
-  /* Size of icons */
   height: 24px;
-}
-
-.placeholder {
-  /* This element is invisible and only used to balance the space */
-  visibility: hidden;
 }
 
 .plus-icon {
   position: absolute;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  /* Position the plus button halfway across the screen, then shift it back half its own width to center it */
 }
 
 .plus {
   width: 40px;
-  /* Size of plus icon */
   height: 40px;
   background-color: #4CAF50;
-  /* Color of plus button */
   border-radius: 50%;
   color: white;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
-  /* Size of plus symbol */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  /* Optional shadow for depth */
   text-decoration: none;
 }
+
 </style>

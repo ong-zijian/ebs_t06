@@ -5,7 +5,8 @@
       <div class="status-bar">
         <!-- Status bar content -->
       </div>
-      <div class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded">
+
+      <div class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded" >
     <div class="greeting-text">
               <span class="hello-text text-secondary">Hello,</span>
               <div v-if="user" class="user-name">
@@ -276,6 +277,7 @@ export default {
   border-radius: 10px;
   padding: 1em;
   margin-bottom: 1em;
+
 }
 
 html,

@@ -92,14 +92,31 @@ body {
     color: #333;
 }
 
-.counselors-container {
+/* .counselors-container {
     width: 90%;
     max-width: 600px;
     margin: 20px auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+
+.counselors-container {
+  width: 90%;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+@media screen and (min-width: 768px) {
+  .counselors-container {
+    width: 95%; /* Adjust the percentage width based on your design */
+    margin: 0 auto; /* Center the container */
+  }
+}
+
+
 
 header {
     display: flex;

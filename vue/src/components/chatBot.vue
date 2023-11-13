@@ -6,7 +6,6 @@
           <div class="col-md-7">
             <div class="chat_window">
               <div class="top_menu">
-                <!-- <div class="title">Franky Chat</div> -->
                 <div class="title">
                   <div v-html="frankyChatIcon"></div> Franky Chat
                 </div>
@@ -219,11 +218,10 @@ body {
 /* Franky chatbot */
 .app-container {
   font-family: Arial, sans-serif;
-  background-color: 	#e6e6fa; /* Soothing background color */
+  background-color: 	#e6e6fa; 
 }
 
 .header {
-  background-color: #E4E4DC; /* Header color */
   color: #fff;
   padding: 20px;
 }
