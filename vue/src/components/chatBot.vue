@@ -38,7 +38,6 @@
 
 
 <script>
-// import { startChatBot } from '@/router/bot'; // Adjust the path to your bot.js file
 import axios from 'axios';
 
 export default {
@@ -50,53 +49,55 @@ export default {
     };
   },
   methods: {
-    renderMessageToScreen(args) {
-      const displayDate = (args.time || this.getCurrentTimestamp()).toLocaleString('en-IN', {
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      });
-      const messagesContainer = this.$el.querySelector('.messages'); // Use Vue's ref feature
+    // renderMessageToScreen(args) {
+    //   const displayDate = (args.time || this.getCurrentTimestamp()).toLocaleString('en-IN', {
+    //     month: 'short',
+    //     day: 'numeric',
+    //     hour: 'numeric',
+    //     minute: 'numeric',
+    //   });
+    //   const messagesContainer = this.$el.querySelector('.messages'); // Use Vue's ref feature
 
-      // Create a new message element
-      const message = document.createElement('li');
-      message.className = `message ${args.message_side}`;
+    //   // Create a new message element
+    //   const message = document.createElement('li');
+    //   message.className = `message ${args.message_side}`;
 
-      // Create the text wrapper element
-      const textWrapper = document.createElement('div');
-      textWrapper.className = 'text_wrapper';
+    //   // Create the text wrapper element
+    //   const textWrapper = document.createElement('div');
+    //   textWrapper.className = 'text_wrapper';
 
-      // Create the text element
-      const text = document.createElement('div');
-      text.className = 'text';
-      text.textContent = args.text;
+    //   // Create the text element
+    //   const text = document.createElement('div');
+    //   text.className = 'text';
+    //   text.textContent = args.text;
 
-      // Create the timestamp element
-      const timestamp = document.createElement('div');
-      timestamp.className = 'timestamp';
-      timestamp.textContent = displayDate;
+    //   // Create the timestamp element
+    //   const timestamp = document.createElement('div');
+    //   timestamp.className = 'timestamp';
+    //   timestamp.textContent = displayDate;
 
-      // Append the elements to the message
-      textWrapper.appendChild(text);
-      textWrapper.appendChild(timestamp);
-      message.appendChild(textWrapper);
+    //   // Append the elements to the message
+    //   textWrapper.appendChild(text);
+    //   textWrapper.appendChild(timestamp);
+    //   message.appendChild(textWrapper);
 
-      // Append the message to the parent
-      messagesContainer.appendChild(message);
+    //   // Append the message to the parent
+    //   messagesContainer.appendChild(message);
 
-      // Perform animations
-      setTimeout(() => {
-        message.classList.add('appeared');
-      }, 0);
+    //   // Perform animations
+    //   setTimeout(() => {
+    //     message.classList.add('appeared');
+    //   }, 0);
 
-      // Scroll to the bottom of the chat window
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    },
+    //   // Scroll to the bottom of the chat window
+    //   messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    // },
     sendMessage() {
       // Your existing send message logic...
       // User sends a message
+      console.log("Before sending message: ", this.message);
       this.showUserMessage(this.message, new Date());
+      console.log("test message: ", this.message);
 
       // Make the botKyma() request with the user's input
       this.botKyma(this.message)
@@ -108,9 +109,11 @@ export default {
           // Handle any errors
           console.error(error);
         });
+      this.message = '';
     },
     botKyma(userInput) {
       // Return a promise to handle the asynchronous nature of the Axios request
+      console.log(userInput);
       return axios
         .post("https://smu-team06-api.ede20ab.kyma.ondemand.com/chatbot", {
           user_input: userInput,
@@ -126,25 +129,24 @@ export default {
         });
     },
     showUserMessage(message, datetime) {
-  if (datetime instanceof Date) {
-    const userMessage = {
-      text: message,
-      time: datetime.toLocaleString('en-IN', {
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      }),
-      message_side: 'right',
-    };
-    console.log(this.messages);
-    this.messages.push(userMessage); // Add the user's message to the messages array
-    this.message = ''; // Clear the input field
-    this.scrollChatToBottom(); // Scroll to the bottom of the chat window immediately
-  } else {
-    console.error('Invalid datetime object:', datetime);
-  }
-},
+      if (datetime instanceof Date) {
+        const userMessage = {
+          text: message,
+          time: datetime.toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          }),
+          message_side: 'right',
+        };
+        console.log(this.messages);
+        this.messages.push(userMessage); // Add the user's message to the messages array
+        this.scrollChatToBottom(); // Scroll to the bottom of the chat window immediately
+      } else {
+        console.error('Invalid datetime object:', datetime);
+      }
+    },
 
     showBotMessage(message, datetime) {
       const botMessage = {
@@ -159,9 +161,7 @@ export default {
       };
 
       this.messages.push(botMessage); // Add the bot's message to the messages array
-
       this.message = ''; // Clear the input field
-
       this.scrollChatToBottom(); // Scroll to the bottom of the chat window immediately
     },
 
@@ -171,88 +171,12 @@ export default {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     },
   },
-  // ... Your existing Vue component code ...
 };
 
 </script>
 
 
 <style scoped>
-/* Existing styles... */
-
-.user-greeting {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* Adjusted for spacing */
-  background-color: #fff;
-  /* Light blue background */
-  padding: 1em;
-}
-
-.hello-text {
-  font-size: 1.2em;
-  /* Adjust size as needed */
-  color: #000;
-  /* Black text */
-  align-self: flex-start;
-  /* Aligns 'Hello' to the top */
-}
-
-.initial-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-  /* Adjust as needed */
-  background: #4287f5;
-  font-weight: bold;
-  margin-left: auto;
-  /* Pushes the initial to the right */
-}
-
-.greeting-text {
-  text-align: left;
-  /* Aligns text to the left */
-}
-
-.greeting-text h1 {
-  margin: 0;
-  color: #000;
-  /* Black text */
-}
-
-.user-image-container {
-  background-color: #4287f5;
-  /* Replace with your preferred color */
-  border-radius: 20px;
-  /* Adjust for desired roundness of corners */
-  width: 305px;
-  /* Adjust as needed */
-  height: 182px;
-  /* Adjust as needed */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.user-image {
-  width: 100px;
-  /* Adjust as needed */
-  height: 100px;
-  /* Adjust as needed */
-  border-radius: 50%;
-  /* This makes the image circular */
-  border: 3px solid #ffffff;
-  /* Adjust color and size as needed */
-  box-sizing: border-box;
-}
-
-/* Rest of your CSS... */
 .message-card {
   /* Replace with the desired background color */
   border-radius: 10px;
@@ -322,7 +246,6 @@ body {
   display: flex;
 }
 
-
 .top_menu {
   background-color: #1CAC78;
   padding: 10px;
@@ -330,22 +253,13 @@ body {
   font-weight: bold;
 }
 
-
 .message {
   display: flex;
   margin: 10px;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  background-color: #4287f5;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
 .text_wrapper {
-  background-color: #f9f9f9; /* Message background color */
+  background-color: #f9f9f9;  /*Message background color */
   border-radius: 5px;
   padding: 5px;
 }
@@ -355,14 +269,15 @@ body {
   justify-content: flex-end; /* Align to the right side */
 }
 
+.text_wrapper.left {
+  background-color: #f9f9f9; /* Background color for bot messages on the left */
+  color: #000; /* Text color for bot messages on the left */
+}
 /* Style for the text wrapper of user messages on the right side */
-.text_wrapper.right {
+.right message.text_wrapper {
   background-color: #1CAC78; /* Background color for user messages on the right */
   color: #fff; /* Text color for user messages on the right */
 }
-
-/* Rest of your CSS... */
-
 
 .text {
   font-size: 14px;
@@ -393,11 +308,4 @@ button {
   margin-left: 10px;
   cursor: pointer;
 }
-
-button:hover {
-  background-color: #1CAC78;
-}
-
-
-
 </style>
