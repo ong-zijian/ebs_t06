@@ -3,11 +3,13 @@
       <button @click="goBack">Back</button>
       <h1>Profile</h1>
   </header>
-  <div class="profile-container mt-2 mb-4">
+  <div class="profile-container mt-2 mb-4" v-if="!loading && student">
     <div class="card shadow m-2 p-2">
-      image icon card
-    </div>
-    <div class="card shadow m-2 p-2">
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 5rem; height: 5rem; font-size: 3rem;">
+          {{ student.fname.charAt(0) }}
+        </div>
+      </div>
       <h2>{{ student.fname }} {{ student.lname }}</h2>
       <form class="form">
         <div class="form-group row mt-3">
@@ -23,9 +25,22 @@
       </form>
     </div>
     <div>
-      Appointment card
+      <h2>Appointments</h2>
     </div>
+    <div v-if="appointments">
+      <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
+        <a><strong>Start Time: </strong>{{ appointment.sDateTime}}</a>
+        <a><strong>End Time: </strong>{{ appointment.eDateTime}}</a>
+        <p><strong>Link: </strong><a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
+      </div>
+    </div>
+  </div>
+  <div v-if="loading">
+    Loading...
+  </div>
 
+  <div v-if="error">
+    {{ error }}
   </div>
 </template>
 
@@ -39,10 +54,16 @@ export default {
     return {
       studentId: "6544938b2b6d90d7618c3647",
       student: null,
+      appointments: null,
+      loading: true,  
+      error: null,    
     };
   },
   created() {
-    this.fetchCounselorData();
+    this.loading = true; 
+    Promise.all([this.fetchCounselorData(), this.fetchAppointments()]).finally(() => {
+      this.loading = false; 
+    });
   },
   methods: {
     fetchCounselorData() {
@@ -55,6 +76,19 @@ export default {
         .catch(error => {
           console.error('Error fetching student data:', error);
           this.error = 'Failed to load the counselor data.'; // Set the error variable here
+          this.loading = false;
+        });
+    },
+    fetchAppointments() {
+      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/bookingStudent/${this.studentId}`)
+        .then(response => {
+          this.appointments = response.data;
+          console.log('Appointments:', this.appointments)
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error('Error fetching appointments:', error);
+          this.error = 'Failed to load the appointments.'; // Set the error variable here
           this.loading = false;
         });
     },
@@ -84,19 +118,6 @@ export default {
   color: white;
   position: relative; /* Add position relative to header */
   height: 195px;
-}
-
-.avatar-container {
-  width: 150px; /* Adjust the width as needed */
-  height: 150px; /* Adjust the height as needed */
-  position: absolute;
-  top: -10%; /* Set top to the bottom of the header */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Center vertically */
-  border-radius: 50%;
-  overflow: hidden;
-  border: 6px solid white; /* Adjust border size for separation */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add shadow for depth */
 }
 
 .settings-btn,

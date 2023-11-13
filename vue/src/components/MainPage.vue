@@ -8,39 +8,47 @@
       <div class="user-greeting">
         <div class="greeting-text">
           <span class="hello-text">Hello,</span>
-          <div v-if="this.user.fname">
-            <h1>Hi {{ this.user.fname }}</h1>
+          <div v-if="user">
+            <h3>{{ user.fname }}</h3>
           </div>
           <div v-else>
-            <h1>Hi</h1>
+            <h3>Loading...</h3>
           </div>
         </div>
-        <div class="initial-icon">
-          S <!-- This will be dynamically generated based on the user's name -->
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 3rem; height: 3rem; font-size: 1.5rem;">
+            {{ user.fname.charAt(0) }}
+          </div>
         </div>
       </div>
-      <div class="centered-container mb-4">
-        <div class="user-image-container">
-          <img :src="userProfileImage" alt="Sarah" class="user-image">
-        </div>
+      <div class="card border-0 centered-container mb-4">
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 5rem; height: 5rem; font-size: 3rem;">
+            {{ user.fname.charAt(0) }}
+          </div>
+        </div><br>
+          <h2>{{ user.fname }} {{ user.lname }}</h2>
       </div>
+      
       <div class="mb-4 bg-secondary shadow p-2 text-white">
         <h2 class="text-center">Your Latest Emotion Score</h2>
         <h2 class="text-center">{{ this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1] }}</h2>
         <p class="text-center">{{ userMessage }}</p>
       </div>
-      <div class="card shadow mb-4">
-        <EmotionScoreChart :plot-data="plotData"/>
-      </div>
-      <WordCloud v-if="journalMessages && journalMessages.journal.length" :journal-entries="journalMessages.journal"/>
-      <div class="content" v-if="journalMessages.journal && journalMessages.journal.length">
-        <div class="message-card shadow" v-for="message in journalMessages.journal" :key="message._id">
-          <div class="row inline">
-            <h2>{{ message.title }}</h2>  
-            <p>{{ message.date }}</p>
-          </div>
-          <p>{{ message.description }}</p>
-        </div>  
+      <div v-if="journalMessages" >
+        <div class="card shadow mb-4" :journal-entries="journalMessages.journal">
+          <EmotionScoreChart :plot-data="plotData"/>
+        </div>
+        <WordCloud  :journal-entries="journalMessages.journal"/>
+        <div class="content">
+          <div class="message-card shadow" v-for="message in journalMessages.journal" :key="message._id">
+            <div class="row inline">
+              <h2>{{ message.title }}</h2>  
+              <p>{{ message.date }}</p>
+            </div>
+            <p>{{ message.description }}</p>
+          </div>  
+        </div>
       </div>
       <div v-else>
         <div>
@@ -102,15 +110,11 @@ export default {
   methods: {
     // Your methods here
     async getAllJournal(){
-      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/65449c50032028ae33e59d15')
+      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/6544938b2b6d90d7618c3647')
       .then(response => {
-        if (response.data.error){
-          this.journalMessages = { journal: [] };
-        } else {
           this.messages = response.data;
           this.journalMessages = this.messages;
           this.preparePlotData();
-        }
         //console.log(this.messages);
       })
     },

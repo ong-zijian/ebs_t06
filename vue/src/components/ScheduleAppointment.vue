@@ -72,7 +72,7 @@ export default {
             eDateTime: localEndISO,
             video: "", 
             cid: this.counselorId,
-            sid: '65449c50032028ae33e59d15'
+            sid: '6544938b2b6d90d7618c3647'
           };
 
           // Post the booking details to the server
