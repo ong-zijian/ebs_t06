@@ -6,6 +6,7 @@ import chatBot from '../components/chatBot.vue';
 import CounselorPage from '../components/CounselorPage.vue';
 import CounselorProfilePage from '../components/CounselorProfilePage.vue';
 import RatingPage from '../components/RatingPage.vue';
+import ProfilePage from '../components/ProfilePage.vue';
 
 // Define your routes
 const routes = [
@@ -40,7 +41,11 @@ const routes = [
     name: 'RatingPage',
     component: RatingPage
   },
-  // ... other routes
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage
+  }
 ];
 
 // Create the router instance

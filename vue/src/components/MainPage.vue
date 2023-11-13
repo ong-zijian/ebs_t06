@@ -102,11 +102,15 @@ export default {
   methods: {
     // Your methods here
     async getAllJournal(){
-      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/6544938b2b6d90d7618c3647')
+      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/65449c50032028ae33e59d15')
       .then(response => {
-        this.messages = response.data;
-        this.journalMessages = this.messages;
-        this.preparePlotData();
+        if (response.data.error){
+          this.journalMessages = { journal: [] };
+        } else {
+          this.messages = response.data;
+          this.journalMessages = this.messages;
+          this.preparePlotData();
+        }
         //console.log(this.messages);
       })
     },

@@ -235,6 +235,30 @@ def get_booking_by_id(object_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
+@app.route('/bookingStudent/<object_id>', methods=['GET'])
+def get_booking_by_sid(object_id):
+    try:
+        # Find all bookings with the given cid
+        booking_cursor = bookings_collection.find({"sid": object_id})
+        bookings_list = list(booking_cursor)
+
+        if bookings_list:
+            # Convert ObjectId and datetime to strings
+            for booking in bookings_list:
+                booking['_id'] = str(booking['_id'])
+                booking['cid'] = str(booking['cid'])
+                booking['sid'] = str(booking['sid'])
+                # Convert datetime to ISO format string
+                booking['sDateTime'] = booking['sDateTime'].isoformat()
+                booking['eDateTime'] = booking['eDateTime'].isoformat()
+            
+            # Return the list of bookings
+            return jsonify(bookings_list)
+        else:
+            return jsonify({"error": "No bookings found with that ID"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
 @app.route('/booking', methods=['POST'])
 def create_booking():
     try:
@@ -282,7 +306,7 @@ def get_emotion_by_id(object_id):
             emotion['sid'] = str(emotion['sid'])
             return jsonify(emotion)
         else:
-            return jsonify({"error": "Emotion not found"}), 404
+            return jsonify({})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
