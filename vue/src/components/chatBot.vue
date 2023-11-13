@@ -10,7 +10,7 @@
               </div>
               <ul class="messages">
                 <li
-                  v-for="(message, index) in messages.slice().reverse()"
+                  v-for="(message, index) in messages.slice()"
                   :key="index"
                   :class="[message.message_side === 'right' ? 'right' : '', 'message']"
                 >
