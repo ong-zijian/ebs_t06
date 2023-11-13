@@ -113,7 +113,8 @@ export default {
       // Return a promise to handle the asynchronous nature of the Axios request
       return axios
         .post("https://smu-team06-api.ede20ab.kyma.ondemand.com/chatbot", {
-          user_input: userInput, // Pass the user's input as a parameter
+          user_input: userInput,
+          user_id:"6544938b2b6d90d7618c3647"
         })
         .then(response => {
           // Return the bot's response
