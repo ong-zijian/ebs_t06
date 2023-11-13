@@ -5,22 +5,22 @@
       <div class="status-bar">
         <!-- Status bar content -->
       </div>
-      <div class="user-greeting">
-        <div class="greeting-text">
-          <span class="hello-text">Hello,</span>
-          <div v-if="user">
-            <h3>{{ user.fname }}</h3>
+      <div class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded">
+    <div class="greeting-text">
+              <span class="hello-text text-secondary">Hello,</span>
+              <div v-if="user" class="user-name">
+                  <h3 class="mb-0">{{ user.fname }}</h3>
+              </div>
+              <div v-else>
+                  <h3 class="mb-0">Loading...</h3>
+              </div>
           </div>
-          <div v-else>
-            <h3>Loading...</h3>
+          <div class="user-avatar d-flex justify-content-center align-items-center bg-primary text-white rounded-circle m-2" style="width: 3rem; height: 3rem; font-size: 1.5rem;">
+              {{ user && user.fname ? user.fname.charAt(0) : '?' }}
           </div>
-        </div>
-        <div class="d-flex justify-content-center align-items-center">
-          <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 3rem; height: 3rem; font-size: 1.5rem;">
-            {{ user.fname.charAt(0) }}
-          </div>
-        </div>
       </div>
+
+
       <div class="card border-0 centered-container mb-4">
         <div class="d-flex justify-content-center align-items-center">
           <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 5rem; height: 5rem; font-size: 3rem;">
@@ -30,26 +30,40 @@
           <h2>{{ user.fname }} {{ user.lname }}</h2>
       </div>
       
-      <div class="mb-4 bg-secondary shadow p-2 text-white">
+      <!-- <div class="mb-4 bg-secondary shadow p-2 text-white">
+        <h2 class="text-center">Your Latest Emotion Score</h2>
+        <h2 class="text-center">{{ this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1] }}</h2>
+        <p class="text-center">{{ userMessage }}</p>
+      </div> -->
+
+      <div class="mb-4 shadow p-2 text-white" :style="{ backgroundColor: userMessageBackgroundColor }">
         <h2 class="text-center">Your Latest Emotion Score</h2>
         <h2 class="text-center">{{ this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1] }}</h2>
         <p class="text-center">{{ userMessage }}</p>
       </div>
-      <div v-if="journalMessages" >
+
+      <div v-if="journalMessages">
         <div class="card shadow mb-4" :journal-entries="journalMessages.journal">
           <EmotionScoreChart :plot-data="plotData"/>
         </div>
-        <WordCloud  :journal-entries="journalMessages.journal"/>
-        <div class="content">
-          <div class="message-card shadow" v-for="message in journalMessages.journal" :key="message._id">
-            <div class="row inline">
-              <h2>{{ message.title }}</h2>  
-              <p>{{ message.date }}</p>
+  
+        <div class="text-center">
+          <WordCloud :journal-entries="journalMessages.journal"/>
+        </div>
+
+        <div class="content bg-light p-4">
+          <div v-for="message in journalMessages.journal" :key="message._id" class="message-card shadow mb-4 p-3 bg-white rounded">
+            <div class="row">
+              <div class="col-md-8">
+                <h2 class="mb-2">{{ message.title }}</h2>
+                <p class="text-muted">{{ message.date }}</p>
+              </div>
             </div>
             <p>{{ message.description }}</p>
           </div>  
         </div>
       </div>
+
       <div v-else>
         <div>
           <span>
@@ -68,21 +82,39 @@ import axios from 'axios';
 import EmotionScoreChart from './EmotionScoreChart.vue';
 import WordCloud from './WordCloud.vue';
 
+
 export default {
   data() {
     return {
       journalMessages: { journal: [] },
       userProfileImage: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
       user: null,
+      // plotData: {
+      //   labels: [], 
+      //   datasets: [{
+      //     label: 'Score',
+      //     data: [],
+      //     backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      //     borderColor: 'rgba(54, 162, 235, 1)',
+      //     borderWidth: 1
+      //   }]
+      // },
       plotData: {
-        labels: [], 
+        labels: [],
         datasets: [{
-          label: 'Score',
+          label: 'Emotion Score',
           data: [],
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          fill: true,
+          lineTension: 0.4,
+          backgroundColor: 'rgba(54, 162, 235, 0.4)',
           borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: function (context) {
+            var value = context.dataset.data[context.dataIndex];
+            return value >= 0 ? 'rgba(0, 255, 0, 1)' : 'rgba(255, 0, 0, 1)';
+          },
+        }],
       },
       messageToUser:["Keep it up and carry on the positivity!", "Not everyday is special, but you are doing great!", "Today might not be the best but it will get better!"]
     };
@@ -96,6 +128,17 @@ export default {
     this.getUserProfile();
   },
   computed:{
+    // userMessage() {
+    //   const lastScore = this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1];
+    //   if (lastScore > 1) {
+    //     return this.messageToUser[0];
+    //   } else if (lastScore > -1) {
+    //     return this.messageToUser[1];
+    //   } else {
+    //     return this.messageToUser[2];
+    //   }
+    // }
+
     userMessage() {
       const lastScore = this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1];
       if (lastScore > 1) {
@@ -105,7 +148,18 @@ export default {
       } else {
         return this.messageToUser[2];
       }
+    },
+    userMessageBackgroundColor() {
+      const lastScore = this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1];
+      if (lastScore > 1) {
+        return 'green';
+      } else if (lastScore > -1) {
+        return 'yellow';
+      } else {
+        return 'red';
+      }
     }
+  
   },
   methods: {
     // Your methods here
