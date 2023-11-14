@@ -24,7 +24,7 @@
             </div>
             <div class="bottom_wrapper">
               <div class="input_container">
-                <input v-model="message" type="text" id="msg_input" placeholder="Share your thoughts...">
+                <input v-model="message" type="text" id="msg_input" placeholder="Share your thoughts..."  @keyup.enter="sendMessage">
                 <button @click="sendMessage">Send</button>
               </div>
             </div>
