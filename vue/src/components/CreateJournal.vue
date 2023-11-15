@@ -60,6 +60,8 @@ export default {
   },
   created() {
     this.userProfile();
+    const studentID = sessionStorage.getItem("studentID");
+    console.log('sid:',studentID);
   },
   methods: {
     userProfile() {
@@ -72,7 +74,7 @@ export default {
         .catch(error => console.error("Error fetching user profile:", error));
     },
     submitEntry() {
-      axios.post(`https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/add/`, this.journalEntry)
+      axios.post(`https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/add`, this.journalEntry)
         .then(() => {
           this.successMessage = "Your journal entry has been posted successfully!";
           this.showSuccess = true;

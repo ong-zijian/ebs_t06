@@ -50,6 +50,42 @@ chat_histories = {
     ]
 }
 
+def handle_sensitive_topics(user_input):
+    # Define sensitive keywords and custom responses
+    sensitive_keywords = {
+    ('suicide', 'suicidal', 'end my life'): "I'm truly concerned to hear that you're feeling this way and it's really important that we find you some help. You're not alone in this, and there are people who want to support you through these tough times. It's crucial that you talk to a mental health professional as soon as possible. They can offer the support and guidance you need to get through this. Please, let's find someone who can help.",
+
+    ('depress', 'depression', 'hopeless'): "I hear that you're feeling depressed, and I want you to know that your feelings are valid. Depression can be incredibly challenging, but there are many people who have walked this path and found their way through. Talking to a mental health professional can be very helpful. They can provide support and strategies to cope with what you're feeling. Remember, you are not alone in this.",
+
+    ('anxious', 'anxiety', 'nervous'): "It sounds like you're dealing with a lot of anxiety. It’s okay to feel this way, and it's a good step to acknowledge these feelings. Anxiety can be overwhelming, but there are ways to manage it. Consider speaking with a mental health professional who can provide you with support and techniques to help you cope. Simple practices like deep breathing or mindfulness can make a difference.",
+
+    ('abuse', 'abused', 'violence'): "I'm very sorry to hear that you might be experiencing abuse. It's important to know that you deserve to be treated with respect and to feel safe. Please consider reaching out to a trusted friend, family member, or a professional for support. There are also organizations and helplines that can provide guidance and assistance.",
+
+    ('grieving', 'grief', 'loss'): "I'm so sorry for your loss. Grief is a deeply personal experience, and it's okay to feel a range of emotions. It can be helpful to talk about your feelings with someone you trust, whether it's a friend, family member, or a mental health professional. Remember, grieving is a process, and it's okay to take it at your own pace.",
+
+    ('stress', 'stressed', 'overwhelmed'): "I'm really sorry to hear that you're feeling stressed. It's completely okay to feel this way, especially with how demanding life can be. Remember, it's important to take care of yourself. Taking short breaks, engaging in activities you enjoy, and maybe even talking to someone you trust can help immensely. Your feelings are valid, and taking steps to manage your stress is a sign of strength.",
+
+    ('panic', 'panic attack', 'panicking'): "Experiencing a panic attack can be really frightening, but remember that it will pass. Try to focus on your breathing – slow, deep breaths. It's also important to talk to a healthcare provider about these experiences. They can offer strategies to manage panic attacks and help you understand what triggers them.",
+
+    ('self-harm', 'hurting myself', 'self injury'): "It sounds like you're going through a very difficult time and might be considering harming yourself. It's important to talk to someone who can help, like a mental health professional. You're not alone, and there are people who want to support you. Your life is valuable, and there is help available to get through this.",
+
+    ('substance abuse', 'addiction', 'drug use'): "Dealing with substance abuse can be incredibly challenging, and I want you to know that it's okay to seek help. There are professionals who specialize in helping people through addiction, and talking to them can be a great first step. Remember, taking the step to ask for help is a sign of strength and the first step towards recovery.",
+
+    ('lonely', 'loneliness', 'isolated'): "Feeling lonely can be really tough, and it's okay to feel this way sometimes. But remember, you're not alone in feeling lonely. Reaching out to friends, family, or community groups can help. Also, consider talking to a mental health professional who can provide support and help you navigate these feelings.",
+
+    }
+
+
+    print(f"Checking for sensitive topics in user input: {user_input}")
+    # Check if any sensitive keyword is in the user input
+    user_input_lower = user_input.lower()
+    for keywords_tuple, response in sensitive_keywords.items():
+        if any(keyword in user_input_lower for keyword in keywords_tuple):
+            return response
+    return None
+
+    return None
+    
 def append_to_chat_history(user_id, exchange):
     if user_id not in chat_histories:
         chat_histories[user_id] = []
@@ -65,7 +101,16 @@ def create_prompt_with_context(chat_history, new_user_input):
     return prompt
 
 def get_response_from_gpt3(user_id, user_input):
+    print(f"Received user input: {user_input}")
+    sensitive_response = handle_sensitive_topics(user_input)
+    
+    
+    if sensitive_response:
+        append_to_chat_history(user_id, {"user": user_input, "bot": sensitive_response})
+        return sensitive_response
+    
     chat_history = get_chat_history(user_id)
+    
     prompt_with_context = create_prompt_with_context(chat_history, user_input)
     
     try:
@@ -73,10 +118,10 @@ def get_response_from_gpt3(user_id, user_input):
             engine="davinci",
             prompt=prompt_with_context,
             max_tokens=150,
-            temperature=0.7,
+            temperature=0.3,
             top_p=1,
-            frequency_penalty=0.5,
-            presence_penalty=0.5,
+            frequency_penalty=0.3,
+            presence_penalty=0.3,
             stop=["\n"],  # Stop the response after one completion
         )
         gpt_response = response.choices[0].text.strip()
@@ -259,6 +304,32 @@ def get_booking_by_sid(object_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
+
+@app.route('/bookingCounsellor/<cid>', methods=['GET'])
+def get_booking_by_cid(cid):
+    try:
+        # Find all bookings with the given cid
+        booking_cursor = bookings_collection.find({"cid": cid})
+        bookings_list = list(booking_cursor)
+
+        if bookings_list:
+            # Convert ObjectId and datetime to strings
+            for booking in bookings_list:
+                booking['_id'] = str(booking['_id'])
+                booking['cid'] = str(booking['cid'])
+                booking['sid'] = str(booking['sid'])
+                # Convert datetime to ISO format string
+                booking['sDateTime'] = booking['sDateTime'].isoformat()
+                booking['eDateTime'] = booking['eDateTime'].isoformat()
+            
+            # Return the list of bookings
+            return jsonify(bookings_list)
+        else:
+            return jsonify({"error": "No bookings found with that ID"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+    
 @app.route('/booking', methods=['POST'])
 def create_booking():
     try:
@@ -353,6 +424,134 @@ def add_emotion_journal_entry():
         else:
             return jsonify({"error": "No matching document found"}), 404
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+
+@app.route('/emotion/add', methods=['POST'])
+def add_emotion_journal_entry():
+    try:
+        request_data = request.get_json()
+        object_id = request_data.get('object_id')
+        title = request_data.get('title')
+        description = request_data.get('description')
+
+        # Preprocess and analyze the sentiment of the description
+        preprocessed_text = preprocess_text(description)
+        sentiment_scores = sid.polarity_scores(preprocessed_text)
+        compound_score = sentiment_scores['compound']
+
+        # Prepare the journal entry
+        current_date = datetime.now().date().isoformat()
+        score_entry = {
+            "date": current_date,
+            "score": compound_score
+        }
+        journal_entry = {
+            "title": title,
+            "description": description,
+            "date": current_date
+        }
+
+        # Updating the MongoDB document using $push
+        result = emotion_collection.update_one(
+            {"sid": ObjectId(object_id)},
+            {
+                "$push": {
+                    "journal": journal_entry,
+                    "score": score_entry
+                }
+            }
+        )
+
+        keywords = ["suicide", "death", "die", "harm", "kill"]
+        stemmed_keywords = [ps.stem(word) for word in keywords]
+        tokens = word_tokenize(preprocessed_text.lower())
+        stemmed_tokens = [ps.stem(word) for word in tokens]
+        if stemmed_tokens[3] in stemmed_keywords:
+            print(True)
+        #print(stemmed_tokens[3]==stemmed_keywords[0])
+        print(stemmed_keywords)
+
+        # Trigger an alert if any of the keywords are found
+        for inputString in stemmed_tokens:
+            if inputString in stemmed_keywords:
+                alert_data = {
+                    "sid": object_id,
+                    "message": description,
+                    "status": "pending"
+                }
+                # Make a POST request to the alert route
+                alert_response = requests.post('http://localhost:5000/checkStudent', json=alert_data)
+                # Handle the response from the alert route
+                if alert_response.status_code == 200:
+                    print("Alert triggered successfully.")
+                else:
+                    print("Failed to trigger alert.")
+            break
+
+        # Checking if any document got updated
+        if result.modified_count > 0:
+            return jsonify({"message": "Journal entry added successfully"}), 200
+        else:
+            return jsonify({"error": "No matching document found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route('/checkStudent', methods=['POST'])
+def handle_alert():
+    try:
+        alert_data = request.get_json()
+        sid = alert_data.get('sid')
+        message = alert_data.get('message')
+        status = alert_data.get('status')
+        
+        # Insert into the alert collection
+        result = alert_collection.insert_one({
+            "sid": ObjectId(sid),
+            "message": message,
+            "status": status
+        })
+        
+        return jsonify({"message": "Alert created successfully", "Results" : result}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@app.route('/checkStudent', methods=['GET'])
+def get_all_alerts():
+    try:
+        alerts = list(alert_collection.find())
+        for alert in alerts:
+            alert['_id'] = str(alert['_id'])
+            alert['sid'] = str(alert['sid'])
+        return jsonify(alerts), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/checkStudent/<sid>', methods=['GET'])
+def get_alert_by_sid(sid):
+    try:
+        alerts = list(alert_collection.find({"sid": ObjectId(sid)}))
+        for alert in alerts:
+            alert['_id'] = str(alert['_id'])
+            alert['sid'] = str(alert['sid'])
+        return jsonify(alerts), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/checkStudent/<alert_id>/address', methods=['PUT'])
+def address_alert(alert_id):
+    try:
+        result = alert_collection.update_one(
+            {"_id": ObjectId(alert_id)},
+            {"$set": {"status": "addressed"}}
+        )
+        if result.modified_count > 0:
+            return jsonify({"message": "Alert status updated to addressed"}), 200
+        else:
+            return jsonify({"error": "No matching alert found or no update needed"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
