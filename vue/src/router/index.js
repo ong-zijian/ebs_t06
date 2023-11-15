@@ -11,6 +11,8 @@ import StudentLogin from '../components/StudentLoginPage.vue';
 import CounselorLogin from '../components/CounselorLoginPage.vue';
 import CounsellorHome from '../components/MainPageCounsellor.vue';
 import AdminPage from '../components/AdminPage.vue';
+import StayPositive from '../components/StayPositive.vue';
+import ManagingAttacks from '../components/ManagingAttacks.vue';
 
 // Define your routes
 const routes = [
@@ -69,6 +71,16 @@ const routes = [
     path: '/CounselorLogin',
     name: 'CounselorLogin',
     component: CounselorLogin
+  },
+  {
+    path: '/StayPositive',
+    name: 'StayPositive',
+    component: StayPositive
+  },
+  {
+    path: '/ManagingAttacks',
+    name: 'ManagingAttacks',
+    component: ManagingAttacks
   },
 ];
 

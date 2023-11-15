@@ -38,11 +38,11 @@
     </div>
     <div v-if="appointments">
       <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
-      <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
-      <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
-      <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
+        <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
+        <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
+        <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
+      </div>
     </div>
-  </div>
   </div>
   <div v-if="loading">
     Loading...
@@ -94,7 +94,11 @@ export default {
       var studentID = sessionStorage.getItem("studentID");
       axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/bookingStudent/` + studentID)
         .then(response => {
-          this.appointments = response.data;
+          // Assuming `response.data` is an array of appointments
+          this.appointments = response.data.sort((a, b) => {
+            // Convert the start times to Date objects and compare them
+            return new Date(a.sDateTime) - new Date(b.sDateTime);
+          });
           console.log('Appointments:', this.appointments)
           this.loading = false;
         })
@@ -104,6 +108,7 @@ export default {
           this.loading = false;
         });
     },
+
     goToSettings() {
       // Implement your logic here
     },
