@@ -1,59 +1,53 @@
 <template>
   <div class="app-container">
-    <!-- Header Section -->
     <div class="header">
-      <div class="status-bar">
-        <!-- Status bar content -->
+      <!-- Greeting section -->
+      <div v-if="user" class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded">
+        <div class="greeting-text">
+          <span class="hello-text text-secondary">Hello,</span>
+          <h3 class="mb-0">{{ user.fname }}</h3>
+        </div>
+        <div class="user-avatar d-flex justify-content-center align-items-center bg-primary text-white rounded-circle m-2"
+          style="width: 3rem; height: 3rem; font-size: 1.5rem;">
+          {{ user?.fname.charAt(0) }}
+        </div>
+      </div>
+      <div v-else>
+        <h3 class="mb-0">Loading...</h3>
       </div>
 
-      <div class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded" >
-    <div class="greeting-text">
-              <span class="hello-text text-secondary">Hello,</span>
-              <div v-if="user" class="user-name">
-                  <h3 class="mb-0">{{ user.fname }}</h3>
-              </div>
-              <div v-else>
-                  <h3 class="mb-0">Loading...</h3>
-              </div>
-          </div>
-          <div class="user-avatar d-flex justify-content-center align-items-center bg-primary text-white rounded-circle m-2" style="width: 3rem; height: 3rem; font-size: 1.5rem;">
-              {{ user && user.fname ? user.fname.charAt(0) : '?' }}
-          </div>
-      </div>
-
-
-      <div class="card border-0 centered-container mb-4">
+      <!-- User profile and name -->
+      <div v-if="user" class="card border-0 centered-container mb-4">
         <div class="d-flex justify-content-center align-items-center">
-          <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 5rem; height: 5rem; font-size: 3rem;">
+          <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2"
+            style="width: 5rem; height: 5rem; font-size: 3rem;">
             {{ user.fname.charAt(0) }}
           </div>
         </div><br>
-          <h2>{{ user.fname }} {{ user.lname }}</h2>
+        <h2>{{ user.fname }} {{ user.lname }}</h2>
       </div>
-      
-      <!-- <div class="mb-4 bg-secondary shadow p-2 text-white">
-        <h2 class="text-center">Your Latest Emotion Score</h2>
-        <h2 class="text-center">{{ this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1] }}</h2>
-        <p class="text-center">{{ userMessage }}</p>
-      </div> -->
 
-      <div class="mb-4 shadow p-2 text-white" :style="{ backgroundColor: userMessageBackgroundColor }">
+      <!-- Emotion score section -->
+      <div v-if="plotData.datasets[0].data.length" class="mb-4 shadow p-2 text-white"
+        :style="{ backgroundColor: userMessageBackgroundColor }">
         <h2 class="text-center">Your Latest Emotion Score</h2>
-        <h2 class="text-center">{{ this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1] }}</h2>
+        <h2 class="text-center">{{ lastEmotionScore }}</h2>
         <p class="text-center">{{ userMessage }}</p>
       </div>
 
+      <!-- Journal entries -->
       <div v-if="journalMessages">
-        <div class="card shadow mb-4" :journal-entries="journalMessages.journal">
-          <EmotionScoreChart :plot-data="plotData"/>
+        <div class="card shadow mb-4">
+          <EmotionScoreChart :plot-data="plotData" />
         </div>
-  
+
         <div class="text-center">
-          <WordCloud :journal-entries="journalMessages.journal"/>
+          <WordCloud :journal-entries="journalMessages.journal" />
         </div>
 
         <div class="content bg-light p-4">
-          <div v-for="message in journalMessages.journal" :key="message._id" class="message-card shadow mb-4 p-3 bg-white rounded">
+          <div v-for="message in reversedJournalMessages" :key="message._id"
+            class="message-card shadow mb-4 p-3 bg-white rounded">
             <div class="row">
               <div class="col-md-8">
                 <h2 class="mb-2">{{ message.title }}</h2>
@@ -61,20 +55,13 @@
               </div>
             </div>
             <p>{{ message.description }}</p>
-          </div>  
+          </div>
         </div>
       </div>
-
       <div v-else>
-        <div>
-          <span>
-            Loading...
-          </span>
-        </div>>
-        
+        <span>Loading...</span>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -87,19 +74,9 @@ import WordCloud from './WordCloud.vue';
 export default {
   data() {
     return {
-      journalMessages: { journal: [] },
+      journalMessages: null,
       userProfileImage: 'https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png',
       user: null,
-      // plotData: {
-      //   labels: [], 
-      //   datasets: [{
-      //     label: 'Score',
-      //     data: [],
-      //     backgroundColor: 'rgba(54, 162, 235, 0.2)',
-      //     borderColor: 'rgba(54, 162, 235, 1)',
-      //     borderWidth: 1
-      //   }]
-      // },
       plotData: {
         labels: [],
         datasets: [{
@@ -117,7 +94,7 @@ export default {
           },
         }],
       },
-      messageToUser:["Keep it up and carry on the positivity!", "Not everyday is special, but you are doing great!", "Today might not be the best but it will get better!"]
+      messageToUser: ["Keep it up and carry on the positivity!", "Not everyday is special, but you are doing great!", "Today might not be the best but it will get better!"]
     };
   },
   components: {
@@ -128,18 +105,7 @@ export default {
     this.getAllJournal();
     this.getUserProfile();
   },
-  computed:{
-    // userMessage() {
-    //   const lastScore = this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1];
-    //   if (lastScore > 1) {
-    //     return this.messageToUser[0];
-    //   } else if (lastScore > -1) {
-    //     return this.messageToUser[1];
-    //   } else {
-    //     return this.messageToUser[2];
-    //   }
-    // }
-
+  computed: {
     userMessage() {
       const lastScore = this.plotData.datasets[0].data[this.plotData.datasets[0].data.length - 1];
       if (lastScore > 1) {
@@ -159,33 +125,43 @@ export default {
       } else {
         return 'red';
       }
-    }
-  
+    },
+    reversedJournalMessages() {
+      // Check if journalMessages and journalMessages.journal are defined before calling slice
+      if (this.journalMessages && this.journalMessages.journal) {
+        return this.journalMessages.journal.slice().reverse();
+      }
+      return []; // Return an empty array if journalMessages.journal is undefined
+    },
+
   },
   methods: {
     // Your methods here
-    async getAllJournal(){
-      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/6544938b2b6d90d7618c3647')
-      .then(response => {
+    async getUserProfile() {
+      var studentID = sessionStorage.getItem('studentID');
+      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/' + studentID)
+        .then(response => {
+          this.user = response.data;
+          this.userProfileImage = this.user.image;
+          console.log(this.user);
+        })
+    },
+
+    async getAllJournal() {
+      var studentID = sessionStorage.getItem('studentID');
+      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/' + studentID)
+        .then(response => {
           this.messages = response.data;
           this.journalMessages = this.messages;
           this.preparePlotData();
-        //console.log(this.messages);
-      })
-    },
-    async getUserProfile(){
-      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/6544938b2b6d90d7618c3647')
-      .then(response => {
-        this.user = response.data;
-        this.userProfileImage = this.user.image;
-        console.log(this.user);
-      })
+          //console.log(this.messages);
+        })
     },
     preparePlotData() {
       if (this.journalMessages && Array.isArray(this.journalMessages.score)) {
         const sortedScores = this.journalMessages.score.sort((a, b) => new Date(a.date) - new Date(b.date));
         const scoresToPlot = sortedScores.slice(-7); // Get the last 7 scores
-        
+
         // Update plotData with the scores and dates
         this.plotData.labels = scoresToPlot.map(entry => entry.date);
         this.plotData.datasets[0].data = scoresToPlot.map(entry => entry.score * 5);
@@ -296,4 +272,5 @@ body {
   /* Centers vertically */
   height: 100%;
   /* Takes up the full height of the viewport */
-}</style>
+}
+</style>

@@ -1,10 +1,13 @@
 <template>
   <div id="journal-app">
+    <!-- Header -->
     <header>
-      <span class="settings-btn">Settings</span>
-      <h1>Journal</h1>
-      <span class="logout-btn">Logout</span>
+      <span class="header-spacer"></span>
+      <h1>Create Journal</h1>
+      <span class="header-spacer"></span>
     </header>
+
+    <!-- User Profile Section -->
     <div v-if="user">
       <section class="user-profile">
         <div class="avatar-container">
@@ -14,17 +17,24 @@
         <p class="user-location">{{ user.location }}</p>
       </section>
 
+      <!-- Journal Entry Section -->
       <section class="journal-entry">
         <input type="text" v-model="journalEntry.title" placeholder="Title" class="entry-title" />
         <textarea v-model="journalEntry.description" placeholder="Journal" class="entry-content"></textarea>
       </section>
     </div>
-    <div v-else>
-      ...
+
+    <!-- Success Message Overlay -->
+    <div v-if="showSuccess" class="success-modal">
+      <div class="success-message-box">
+        {{ successMessage }}
+        <button @click="closeSuccessModal">OK</button>
+      </div>
     </div>
 
+    <!-- Footer -->
     <footer>
-      <button class="cancel-btn">Cancel</button>
+      <button class="cancel-btn" @click="goBack">Go Back</button>
       <button class="post-btn" @click="submitEntry">Post</button>
     </footer>
   </div>
@@ -43,30 +53,45 @@ export default {
         title: '',
         description: ''
       },
-      user: null
+      user: null,
+      successMessage: '',
+      showSuccess: false
     }
   },
   created() {
     this.userProfile();
   },
   methods: {
-    userProfile(){
-        axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/6544938b2b6d90d7618c3647')
+    userProfile() {
+      const studentID = sessionStorage.getItem("studentID");
+      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/student/${studentID}`)
         .then(response => {
           this.user = response.data;
           this.journalEntry.object_id = this.user._id;
-          console.log(this.user);
         })
+        .catch(error => console.error("Error fetching user profile:", error));
     },
     submitEntry() {
-      // Handle the journal entry submission
-      // console.log("Title:", this.journalEntry.title);
-      // console.log("Content:", this.journalEntry.content);
-      // You would typically send this data to a server here
-      axios.post(`https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/add`, this.journalEntry)
-      .then(response => {
-        console.log(response);
-      }) 
+      axios.post(`https://smu-team06-api.ede20ab.kyma.ondemand.com/emotion/add/`, this.journalEntry)
+        .then(() => {
+          this.successMessage = "Your journal entry has been posted successfully!";
+          this.showSuccess = true;
+          this.clearJournalEntry(); // Clear the form after successful submission
+        })
+        .catch(() => {
+          this.successMessage = "Failed to post journal entry. Please try again.";
+          this.showSuccess = true;
+        });
+    },
+    closeSuccessModal() {
+      this.showSuccess = false;
+    },
+    clearJournalEntry() {
+      this.journalEntry.title = '';
+      this.journalEntry.description = '';
+    },
+    goBack() {
+      this.$router.back();
     }
   }
 }
@@ -86,7 +111,8 @@ header {
   padding: 1em;
   background-color: #007bff;
   color: white;
-  position: relative; /* Make header the positioning context for the avatar */
+  position: relative;
+  /* Make header the positioning context for the avatar */
   height: 195px;
 }
 
@@ -105,22 +131,32 @@ footer {
 }
 
 .avatar-container {
-  width: 160px; /* Set the avatar width, adjust as necessary */
-  height: 160px; /* Set the avatar height, adjust as necessary */
+  width: 160px;
+  /* Set the avatar width, adjust as necessary */
+  height: 160px;
+  /* Set the avatar height, adjust as necessary */
   position: absolute;
-  top: 19%; /* Start at the vertical middle of the header */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust position to center in header */
-  border-radius: 50%; /* Make it round */
-  overflow: hidden; /* Hide the overflow */
-  background-color: #fff; /* Match the avatar background color */
-  border: 3px solid #fff; /* Border to create a clean separation from header */
+  top: 19%;
+  /* Start at the vertical middle of the header */
+  left: 50%;
+  /* Center horizontally */
+  transform: translate(-50%, -50%);
+  /* Adjust position to center in header */
+  border-radius: 50%;
+  /* Make it round */
+  overflow: hidden;
+  /* Hide the overflow */
+  background-color: #fff;
+  /* Match the avatar background color */
+  border: 3px solid #fff;
+  /* Border to create a clean separation from header */
 }
 
 .user-avatar {
   width: 100%;
   height: auto;
-  border-radius: 50%; /* Update this to match the desired border-radius */
+  border-radius: 50%;
+  /* Update this to match the desired border-radius */
   /* Add any additional styling here for the avatar image */
 }
 
@@ -153,7 +189,8 @@ footer {
   height: 270px;
 }
 
-.cancel-btn, .post-btn {
+.cancel-btn,
+.post-btn {
   padding: 0.5em 1em;
   border: none;
   border-radius: 5px;
@@ -169,5 +206,34 @@ footer {
   color: white;
 }
 
-/* Add additional styling as per your design requirements */
+/* Success Modal */
+.success-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.success-message-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.success-message-box button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #28a745;
+  color: white;
+  cursor: pointer;
+}
 </style>

@@ -1,9 +1,9 @@
 <template>
   <div class="profile-container">
     <div class="header">
-      <button class="settings-btn" @click="goToSettings">Settings</button>
       <span class="header-spacer"></span>
-      <button class="logout-btn" @click="logout">Logout</button>
+      <span class="header-spacer"></span>
+      <span class="header-spacer"></span>
     </div>
 
     <!-- Conditionally render profile card only when counselor data is available -->

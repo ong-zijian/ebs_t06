@@ -7,6 +7,8 @@ import CounselorPage from '../components/CounselorPage.vue';
 import CounselorProfilePage from '../components/CounselorProfilePage.vue';
 import RatingPage from '../components/RatingPage.vue';
 import ProfilePage from '../components/ProfilePage.vue';
+import StudentLogin from '../components/StudentLoginPage.vue';
+import CounselorLogin from '../components/CounselorLoginPage.vue';
 
 // Define your routes
 const routes = [
@@ -35,7 +37,7 @@ const routes = [
     name: 'CounselorProfile',
     component: CounselorProfilePage,
     props: true
-  },  
+  },
   {
     path: '/RatingPage',
     name: 'RatingPage',
@@ -45,7 +47,17 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: ProfilePage
-  }
+  },
+  {
+    path: '/studentLogin',
+    name: 'studentLogin',
+    component: StudentLogin
+  },
+  {
+    path: '/CounselorLogin',
+    name: 'CounselorLogin',
+    component: CounselorLogin
+  },
 ];
 
 // Create the router instance

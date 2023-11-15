@@ -11,11 +11,8 @@
                 </div>
               </div>
               <ul class="messages">
-                <li
-                  v-for="(message, index) in messages.slice().reverse()"
-                  :key="index"
-                  :class="[message.message_side === 'right' ? 'right' : '', 'message']"
-                >
+                <li v-for="(message, index) in messages" :key="index"
+                  :class="[message.message_side === 'right' ? 'right' : '', 'message']">
                   <div class="text_wrapper">
                     <div class="text">{{ message.text }}</div>
                     <div class="timestamp">{{ message.time }}</div>
@@ -189,6 +186,7 @@ export default {
   font-size: 1.5rem;
   /* Add other styles as needed */
 }
+
 .message-card {
   /* Replace with the desired background color */
   border-radius: 10px;
@@ -196,12 +194,10 @@ export default {
   margin-bottom: 1em;
 }
 
-html,
-body {
+html, body {
   height: 100%;
-  /* This makes sure the body takes up the full viewport height */
   margin: 0;
-  /* Removes default margin */
+  padding: 0;
 }
 
 .centered-container {
@@ -218,7 +214,7 @@ body {
 /* Franky chatbot */
 .app-container {
   font-family: Arial, sans-serif;
-  background-color: 	#e6e6fa; 
+  background-color: #e6e6fa;
 }
 
 .header {
@@ -230,27 +226,35 @@ body {
   border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow: auto; /* Allow the messages to scroll inside the chat_window */
-  background-color: #fff; /* Chat window background */
+  overflow: auto;
+  /* Allow the messages to scroll inside the chat_window */
+  background-color: #fff;
+  /* Chat window background */
   height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Keep messages aligned at the top */
-  position: relative; /* Add position relative */
+  justify-content: flex-start;
+  /* Keep messages aligned at the top */
+  position: relative;
+  /* Add position relative */
 }
 
 .messages {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  flex: 1; /* Allow messages to grow and take up available space */
+  flex: 1;
+  /* Allow messages to grow and take up available space */
 }
 
 .bottom_wrapper {
-  background-color: #fff; /* Input area background color */
+  background-color: #fff;
+  /* Input area background color */
   padding: 10px;
-  position: relative; /* Keep the input_container relative to the chat_window */
-  flex-shrink: 0; /* Prevent the input_container from shrinking */
+  position: relative;
+  /* Keep the input_container relative to the chat_window */
+  flex-shrink: 0;
+  /* Prevent the input_container from shrinking */
 }
 
 .input_container {
@@ -270,29 +274,37 @@ body {
 }
 
 .text_wrapper {
-  background-color: #fafad2;  /*Message background color */
+  background-color: #fafad2;
+  /*Message background color */
   border-radius: 5px;
   padding: 5px;
 }
 
 /* Styles for user messages on the right side */
 .message.right {
-  justify-content: flex-end; /* Align to the right side */
+  justify-content: flex-end;
+  /* Align to the right side */
 }
 
 .text_wrapper.left {
-  background-color: #f9f9f9; /* Background color for bot messages on the left */
-  color: #000; /* Text color for bot messages on the left */
+  background-color: #f9f9f9;
+  /* Background color for bot messages on the left */
+  color: #000;
+  /* Text color for bot messages on the left */
 }
+
 /* Style for the text wrapper of user messages on the right side */
 .right message.text_wrapper {
-  background-color: #1CAC78; /* Background color for user messages on the right */
-  color: #fff; /* Text color for user messages on the right */
+  background-color: #1CAC78;
+  /* Background color for user messages on the right */
+  color: #fff;
+  /* Text color for user messages on the right */
 }
 
 .text {
   font-size: 14px;
-  color: #000; /* Improved text visibility */
+  color: #000;
+  /* Improved text visibility */
   padding: 5%;
 }
 
@@ -318,5 +330,4 @@ button {
   padding: 10px 15px;
   margin-left: 10px;
   cursor: pointer;
-}
-</style>
+}</style>

@@ -1,12 +1,21 @@
 <template>
-  <header>
-      <button @click="goBack">Back</button>
-      <h1>Profile</h1>
+  <header class="header">
+    <button class="settings-btn"></button>
+    <h1 class="header-title">Profile</h1>
+    <button class="logout-btn" @click="confirmLogout">Logout</button>
   </header>
+  <div v-if="showLogoutConfirmation" class="logout-confirmation-overlay">
+    <div class="logout-confirmation-box">
+      <p>Are you sure you want to logout?</p>
+      <button @click="logout">Yes</button>
+      <button @click="showLogoutConfirmation = false">No</button>
+    </div>
+  </div>
   <div class="profile-container mt-2 mb-4" v-if="!loading && student">
     <div class="card shadow m-2 p-2">
       <div class="d-flex justify-content-center align-items-center">
-        <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2" style="width: 5rem; height: 5rem; font-size: 3rem;">
+        <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2"
+          style="width: 5rem; height: 5rem; font-size: 3rem;">
           {{ student.fname.charAt(0) }}
         </div>
       </div>
@@ -15,11 +24,11 @@
         <div class="form-group row mt-3">
           <label for="name" class="col-form-label"><strong>Email:</strong></label>
           <div>
-              <input type="text" id="name" class="form-control" :value="student.email" readonly>
+            <input type="text" id="name" class="form-control" :value="student.email" readonly>
           </div>
           <label for="name" class="col-form-label"><strong>Location:</strong></label>
           <div>
-              <input type="text" id="name" class="form-control" :value="student.location" readonly>
+            <input type="text" id="name" class="form-control" :value="student.location" readonly>
           </div>
         </div>
       </form>
@@ -29,10 +38,10 @@
     </div>
     <div v-if="appointments">
       <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
-        <a><strong>Start Time: </strong>{{ appointment.sDateTime}}</a>
-        <a><strong>End Time: </strong>{{ appointment.eDateTime}}</a>
-        <p><strong>Link: </strong><a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
-      </div>
+  <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
+  <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
+  <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
+</div>
     </div>
   </div>
   <div v-if="loading">
@@ -55,19 +64,21 @@ export default {
       studentId: "6544938b2b6d90d7618c3647",
       student: null,
       appointments: null,
-      loading: true,  
-      error: null,    
+      loading: true,
+      error: null,
+      showLogoutConfirmation: false,
     };
   },
   created() {
-    this.loading = true; 
+    this.loading = true;
     Promise.all([this.fetchCounselorData(), this.fetchAppointments()]).finally(() => {
-      this.loading = false; 
+      this.loading = false;
     });
   },
   methods: {
     fetchCounselorData() {
-      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/student/${this.studentId}`)
+      var studentID = sessionStorage.getItem("studentID");
+      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/student/` + studentID)
         .then(response => {
           this.student = response.data;
           console.log('Student:', this.student)
@@ -80,7 +91,8 @@ export default {
         });
     },
     fetchAppointments() {
-      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/bookingStudent/${this.studentId}`)
+      var studentID = sessionStorage.getItem("studentID");
+      axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/bookingStudent/` + studentID)
         .then(response => {
           this.appointments = response.data;
           console.log('Appointments:', this.appointments)
@@ -95,9 +107,17 @@ export default {
     goToSettings() {
       // Implement your logic here
     },
+    confirmLogout() {
+      this.showLogoutConfirmation = true;
+    },
     logout() {
-      // Implement your logic here
-    }
+      sessionStorage.clear();
+      this.$router.push('/studentLogin');
+    },
+    formatDate(dateTimeString) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      return new Date(dateTimeString).toLocaleString('en-US', options);
+    },
   }
 };
 
@@ -112,22 +132,49 @@ export default {
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  /* This will space out your items */
+  align-items: center;
   padding: 1rem;
   background-color: #007BFF;
   color: white;
-  position: relative; /* Add position relative to header */
-  height: 195px;
+  font-size: 1.5rem;
+  /* Adjust the size as needed */
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  /* Ensure the title has no margin to center it correctly */
+  font-size: 1.5rem;
+  /* Adjust the size as needed */
 }
 
 .settings-btn,
 .logout-btn {
+  /* Adjust padding as needed to give buttons more space */
+  padding: 0.5rem 1rem;
   background: none;
   border: none;
   color: white;
-  font-weight: bold;
   cursor: pointer;
+  font-size: 1rem;
+  /* Adjust the size as needed */
 }
+
+.header-title {
+  /* No changes needed here */
+  margin: 0;
+  /* Ensures the title has no extra space around it */
+}
+
+/* Ensure that both buttons have the same width to maintain balance */
+.settings-btn,
+.logout-btn {
+  min-width: 80px;
+  /* Adjust as needed */
+}
+
 
 .header-spacer {
   flex-grow: 1;
@@ -148,11 +195,13 @@ export default {
 .profile-photo {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure the image covers the container without distortion */
+  object-fit: cover;
+  /* Ensure the image covers the container without distortion */
 }
 
 .counselor-name {
-  margin-top: 70px; /* Adjust this value as needed */
+  margin-top: 70px;
+  /* Adjust this value as needed */
   font-size: 1.5rem;
   color: #333;
 }
@@ -173,7 +222,36 @@ export default {
   cursor: pointer;
   font-size: 1rem;
   margin-top: 1rem;
-  /* Add some space above the button */
 }
 
-/* Additional styles for your reviews and other content */</style>
+.logout-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.logout-confirmation-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.logout-confirmation-box button {
+  margin: 10px;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+}
+</style>

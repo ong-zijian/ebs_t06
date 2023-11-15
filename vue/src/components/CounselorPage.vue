@@ -1,26 +1,25 @@
 <template>
     <div>
         <header>
-            <button @click="goBack">Back</button>
+            <span class="header-spacer"></span>
             <h1>Counselors</h1>
-            <button>Filter</button>
+            <span class="header-spacer"></span>
         </header>
         <div class="counselors-container">
             <div class="search-bar">
                 <input type="text" v-model="searchTerm" placeholder="Search" />
             </div>
             <div class="counselor-list">
-                <div v-for="counselor in counsellors" :key="counselor._id" class="counselor-item"
+                <div v-for="counselor in filteredCounselors" :key="counselor._id" class="counselor-item"
                     @click="goToCounselorProfile(counselor._id)">
                     <div class="profile-photo">
-                        <img v-if="counselor && counselor.photo" :src="counselor.photo"
-                            :alt="`Photo of ${counselor.name}`" />
+                        <img v-if="counselor.photo" :src="counselor.photo"
+                            :alt="`Photo of ${counselor.fname} ${counselor.lname}`" />
                     </div>
                     <div class="profile-info">
                         <h2>{{ counselor.fname }} {{ counselor.lname }}</h2>
                         <p>{{ counselor.description }}</p>
                         <div class="rating">
-                            <!-- Replace with your star-rating component -->
                             <span v-for="star in 5" :key="star" class="star"
                                 :class="{ 'filled': star <= counselor.rating }">
                                 ★
@@ -29,6 +28,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </template>
@@ -74,8 +74,8 @@ export default {
     },
     computed: {
         filteredCounselors() {
-            return this.counselors.filter(counselor =>
-                counselor.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+            return this.counsellors.filter(counselor =>
+                `${counselor.fname} ${counselor.lname}`.toLowerCase().includes(this.searchTerm.toLowerCase())
             );
         },
     },
@@ -102,18 +102,20 @@ body {
 } */
 
 .counselors-container {
-  width: 90%;
-  margin: 20px auto;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media screen and (min-width: 768px) {
-  .counselors-container {
-    width: 95%; /* Adjust the percentage width based on your design */
-    margin: 0 auto; /* Center the container */
-  }
+    .counselors-container {
+        width: 95%;
+        /* Adjust the percentage width based on your design */
+        margin: 0 auto;
+        /* Center the container */
+    }
 }
 
 
