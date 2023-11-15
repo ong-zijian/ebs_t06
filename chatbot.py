@@ -48,8 +48,6 @@ def handle_sensitive_topics(user_input):
         if any(keyword in user_input_lower for keyword in keywords_tuple):
             return response
     return None
-
-    return None
     
 def append_to_chat_history(user_id, exchange):
     if user_id not in chat_histories:
@@ -69,7 +67,6 @@ def get_response_from_gpt3(user_id, user_input):
     print(f"Received user input: {user_input}")
     sensitive_response = handle_sensitive_topics(user_input)
     
-    
     if sensitive_response:
         append_to_chat_history(user_id, {"user": user_input, "bot": sensitive_response})
         return sensitive_response
@@ -78,27 +75,32 @@ def get_response_from_gpt3(user_id, user_input):
     
     prompt_with_context = create_prompt_with_context(chat_history, user_input)
     
+    print(f"Prompt to OpenAI: {prompt_with_context}")  # Debug print
+    
     try:
         response = openai.Completion.create(
             engine="davinci",
             prompt=prompt_with_context,
             max_tokens=150,
-            temperature=0.3,
+            temperature=0.4,
             top_p=1,
-            frequency_penalty=0.3,
-            presence_penalty=0.3,
+            frequency_penalty=0.5,
+            presence_penalty=0.6,
             stop=["\n"],  # Stop the response after one completion
         )
         gpt_response = response.choices[0].text.strip()
 
-        # Post-process the response to prevent repetitive answers
-        if gpt_response.lower() in ["i'm sorry to hear that.", "i'm sorry to hear that"]:
-            # Provide a more helpful follow-up or ask for more information
-            gpt_response = "I'm here for you. What's been on your mind lately?"
+        # Debug: Print the response from OpenAI
+        print(f"GPT-3 response: {gpt_response}")
+
+        # Remove the static response override for debugging
+        # if gpt_response.lower() in ["i'm sorry to hear that."]:
+        #     gpt_response = "I'm here for you. What's been on your mind lately?"
 
         append_to_chat_history(user_id, {"user": user_input, "bot": gpt_response})
         return gpt_response
     except Exception as e:
+        # Debug: Print any exceptions
         print(f"Error during GPT-3 response generation: {e}")
         return "I'm not sure how to respond to that. Can you rephrase?"
 

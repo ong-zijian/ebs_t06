@@ -10,7 +10,7 @@
             <input type="password" placeholder="Password" v-model="credentials.password" required>
           </div>
           <div class="register-link">
-            You're a student? <router-link to="/studentLogin" active-class="active-link">Click Here</router-link>
+            You're a student? <router-link to="/" active-class="active-link">Click Here</router-link>
           </div>
           <button type="submit">LOGIN</button>
         </form>
