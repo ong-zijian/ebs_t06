@@ -16,6 +16,7 @@ import string
 import openai
 import os
 import json
+import requests
 
 app = Flask(__name__)
 
@@ -382,53 +383,6 @@ def get_emotion_by_id(object_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-
-@app.route('/emotion/add', methods=['POST'])
-def add_emotion_journal_entry():
-    try:
-        request_data = request.get_json()
-        object_id = request_data.get('object_id')
-        title = request_data.get('title')
-        description = request_data.get('description')
-
-        # Preprocess and analyze the sentiment of the description
-        preprocessed_text = preprocess_text(description)
-        sentiment_scores = sid.polarity_scores(preprocessed_text)
-        compound_score = sentiment_scores['compound']
-
-        # Prepare the journal entry
-        current_date = datetime.now().date().isoformat()
-        score_entry = {
-            "date": current_date,
-            "score": compound_score
-        }
-        journal_entry = {
-            "title": title,
-            "description": description,
-            "date": current_date
-        }
-
-        # Updating the MongoDB document using $push
-        result = emotion_collection.update_one(
-            {"sid": ObjectId(object_id)},
-            {
-                "$push": {
-                    "journal": journal_entry,
-                    "score": score_entry
-                }
-            }
-        )
-
-        # Checking if any document got updated
-        if result.modified_count > 0:
-            return jsonify({"message": "Journal entry added successfully"}), 200
-        else:
-            return jsonify({"error": "No matching document found"}), 404
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    
-
 @app.route('/emotion/add', methods=['POST'])
 def add_emotion_journal_entry():
     try:
@@ -483,7 +437,7 @@ def add_emotion_journal_entry():
                     "status": "pending"
                 }
                 # Make a POST request to the alert route
-                alert_response = requests.post('http://localhost:5000/checkStudent', json=alert_data)
+                alert_response = requests.post('https://smu-team06-api.ede20ab.kyma.ondemand.com//checkStudent', json=alert_data)
                 # Handle the response from the alert route
                 if alert_response.status_code == 200:
                     print("Alert triggered successfully.")
