@@ -38,11 +38,11 @@
     </div>
     <div v-if="appointments">
       <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
-  <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
-  <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
-  <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
-</div>
+      <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
+      <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
+      <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
     </div>
+  </div>
   </div>
   <div v-if="loading">
     Loading...
@@ -112,7 +112,7 @@ export default {
     },
     logout() {
       sessionStorage.clear();
-      this.$router.push('/studentLogin');
+      this.$router.push('/');
     },
     formatDate(dateTimeString) {
       const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };

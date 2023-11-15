@@ -1,7 +1,7 @@
 <template>
   <div class="navigation-bar">
     <div class="nav-item">
-      <router-link to="/" exact active-class="active">
+      <router-link to="/home" exact active-class="active">
         <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" />
       </router-link>
     </div>
