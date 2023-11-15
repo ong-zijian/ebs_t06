@@ -31,7 +31,7 @@
       <div v-if="plotData.datasets[0].data.length" class="mb-4 shadow p-2 text-white"
         :style="{ backgroundColor: userMessageBackgroundColor }">
         <h2 class="text-center">Your Latest Emotion Score</h2>
-        <h2 class="text-center">{{ lastEmotionScore }}</h2>
+        <h2 class="text-center">{{ plotData.datasets[0].data[plotData.datasets[0].data.length-1] }}</h2>
         <p class="text-center">{{ userMessage }}</p>
       </div>
 
@@ -153,6 +153,7 @@ export default {
         .then(response => {
           this.messages = response.data;
           this.journalMessages = this.messages;
+          console.log('journal msg: ', this.journalMessages);
           this.preparePlotData();
           //console.log(this.messages);
         })
@@ -165,7 +166,7 @@ export default {
         // Update plotData with the scores and dates
         this.plotData.labels = scoresToPlot.map(entry => entry.date);
         this.plotData.datasets[0].data = scoresToPlot.map(entry => entry.score * 5);
-        console.log(this.plotData);
+        console.log("plot data:", this.plotData);
       }
     },
   },

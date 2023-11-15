@@ -6,10 +6,21 @@
             <span class="header-spacer"></span>
         </header>
         <div class="counselors-container">
-            <div class="search-bar">
-                <input type="text" v-model="searchTerm" placeholder="Search" />
+            <div class="row mt-2 mb-2 p-2">
+                <div class="col-md-6 mb-3">
+                    <input type="text" class="form-control" v-model="searchTerm" placeholder="Search" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <select class="form-select" v-model="selectedSpecialty">
+                        <option value="">All Specialties</option>
+                        <option v-for="specialty in uniqueSpecialties" :key="specialty" :value="specialty">
+                            {{ specialty }}
+                        </option>
+                    </select>
+                </div>
             </div>
-            <div class="counselor-list">
+            <div class="m-2"></div>
+            <div class="counselor-list mt-2">
                 <div v-for="counselor in filteredCounselors" :key="counselor._id" class="counselor-item"
                     @click="goToCounselorProfile(counselor._id)">
                     <div class="profile-photo">
@@ -19,6 +30,10 @@
                     <div class="profile-info">
                         <h2>{{ counselor.fname }} {{ counselor.lname }}</h2>
                         <p>{{ counselor.description }}</p>
+                        <div>
+                            <span v-for="specialties in counselor.specialty" :key="specialties"
+                            class="badge text-bg-primary p-2">{{ specialties }}</span>
+                        </div>
                         <div class="rating">
                             <span v-for="star in 5" :key="star" class="star"
                                 :class="{ 'filled': star <= counselor.rating }">
@@ -41,7 +56,9 @@ export default {
     data() {
         return {
             searchTerm: '',
-            counsellors: [], // Start with an empty array
+            counsellors: [], 
+            specialtiesSet: new Set(), 
+            selectedSpecialty: '', 
         };
     },
     created() {
@@ -52,17 +69,23 @@ export default {
             // Make sure the URL matches your Flask route
             axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/counsellors')
                 .then(response => {
-                    // Assume the response data is an array of counselors
                     this.counsellors = response.data;
-                    console.log('Counselors:', this.counsellors);
+                    this.extractSpecialties();
+                    console.log('Counselors:', this.counsellors[0]);
                 })
                 .catch(error => {
                     console.error('Error fetching counselors:', error);
-                    // Handle the error accordingly
                 });
         },
+        extractSpecialties() {
+            this.counsellors.forEach(counselor => {
+                counselor.specialty.forEach(specialty => {
+                    this.specialtiesSet.add(specialty);
+                });
+            });
+        },
         goBack() {
-            this.$router.go(-1); // Go back to the previous page
+            this.$router.go(-1);
         },
         goToCounselorProfile(id) {
             if (id !== undefined) {
@@ -74,9 +97,22 @@ export default {
     },
     computed: {
         filteredCounselors() {
-            return this.counsellors.filter(counselor =>
-                `${counselor.fname} ${counselor.lname}`.toLowerCase().includes(this.searchTerm.toLowerCase())
-            );
+            if (this.selectedSpecialty === '') {
+                // If no specialty is selected, do not filter by specialty
+                return this.counsellors.filter(counselor =>
+                    `${counselor.fname} ${counselor.lname}`.toLowerCase().includes(this.searchTerm.toLowerCase())
+                );
+            } else {
+                // Filter counselors by the selected specialty and search term
+                return this.counsellors.filter(counselor =>
+                    counselor.specialty.includes(this.selectedSpecialty) &&
+                    `${counselor.fname} ${counselor.lname}`.toLowerCase().includes(this.searchTerm.toLowerCase())
+                );
+            }
+        },
+        // Convert the Set to an array for use in the template
+        uniqueSpecialties() {
+            return Array.from(this.specialtiesSet);
         },
     },
 };

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <AppHeader />
+    <!-- <AppHeader /> -->
     <router-view/>
     <AppFooter />
   </div>
@@ -12,7 +12,7 @@ import AppFooter from './components/MainBtm.vue';
 export default {
   name: 'App',
   components: {
-    AppFooter
+    AppFooter,
   }
 }
 </script>

@@ -9,6 +9,7 @@ import RatingPage from '../components/RatingPage.vue';
 import ProfilePage from '../components/ProfilePage.vue';
 import StudentLogin from '../components/StudentLoginPage.vue';
 import CounselorLogin from '../components/CounselorLoginPage.vue';
+import CounsellorHome from '../components/MainPageCounsellor.vue';
 
 // Define your routes
 const routes = [
@@ -16,6 +17,11 @@ const routes = [
     path: '/',
     name: 'MainPage',
     component: MainPage
+  },
+  {
+    path: '/CounsellorHome',
+    name: 'CounsellorHome',
+    component: CounsellorHome
   },
   {
     path: '/CreateJournal',
