@@ -10,8 +10,8 @@
                   <div v-html="frankyChatIcon"></div> Franky Chat
                 </div>
               </div>
-              <ul class="messages">
-                <li v-for="(message, index) in messages" :key="index"
+              <ul class="messages" ref="messageList">
+                <li v-for="(message, index) in messages" :key="index" ref="messageList"
                   :class="[message.message_side === 'right' ? 'right' : '', 'message']">
                   <div class="text_wrapper">
                     <div class="text">{{ message.text }}</div>
@@ -51,6 +51,9 @@ export default {
 </svg>
       `,
     };
+  },
+  updated() {
+    this.scrollChatToBottom();
   },
   methods: {
     renderMessageToScreen(args) {
@@ -97,24 +100,54 @@ export default {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     },
     sendMessage() {
-      // Your existing send message logic...
-      // User sends a message
-      console.log("Before sending message: ", this.message);
-      this.showUserMessage(this.message, new Date());
-      console.log("test message: ", this.messages);
+      if (!this.message.trim()) return; // Don't send empty messages
 
-      // Make the botKyma() request with the user's input
-      this.botKyma(this.message)
+      // Assume we're creating a new message object for the user's message
+      const newUserMessage = {
+        text: this.message,
+        time: new Date().toLocaleString('en-IN', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+        }),
+        message_side: 'right',
+      };
+
+      // Push the user's message to the messages array
+      this.messages.push(newUserMessage);
+
+      // Reset the input field
+      this.message = '';
+
+      // Call the bot response simulation (or an API request)
+      this.botKyma(newUserMessage.text)
         .then(response => {
-          // Once the response is received, show the actual bot message
-          this.showBotMessage(response, new Date());
+          // Simulate a response message object from the bot
+          const newBotMessage = {
+            text: response,
+            time: new Date().toLocaleString('en-IN', {
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            }),
+            message_side: 'left',
+          };
+
+          // Push the bot's message to the messages array
+          this.messages.push(newBotMessage);
+
+          // Scroll to the bottom to show new messages
+          this.scrollChatToBottom();
         })
         .catch(error => {
-          // Handle any errors
-          console.error(error);
+          console.error('Error sending the message: ', error);
         });
-      this.message = '';
     },
+    
     botKyma(userInput) {
       // Return a promise to handle the asynchronous nature of the Axios request
       console.log(userInput);
@@ -165,14 +198,19 @@ export default {
 
       this.messages.push(botMessage); // Add the bot's message to the messages array
       this.message = ''; // Clear the input field
-      this.scrollChatToBottom(); // Scroll to the bottom of the chat window immediately
+      this.$nextTick(() => this.scrollChatToBottom()); // Scroll after the next DOM update
     },
 
     // Function to scroll the chat to the bottom
     scrollChatToBottom() {
-      const messagesContainer = this.$el.querySelector('.messages');
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      this.$nextTick(() => {
+        const messagesContainer = this.$refs.messageList;
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+      });
     },
+
   },
 };
 
@@ -194,7 +232,8 @@ export default {
   margin-bottom: 1em;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -275,9 +314,10 @@ html, body {
 
 .text_wrapper {
   background-color: #fafad2;
-  /*Message background color */
   border-radius: 5px;
   padding: 5px;
+  overflow-x: hidden;
+  /* This will prevent horizontal scrolling */
 }
 
 /* Styles for user messages on the right side */
@@ -286,11 +326,17 @@ html, body {
   /* Align to the right side */
 }
 
-.text_wrapper.left {
-  background-color: #f9f9f9;
-  /* Background color for bot messages on the left */
-  color: #000;
-  /* Text color for bot messages on the left */
+/* Styles for user messages on the right side */
+.message.right .text_wrapper {
+  background-color: lightblue;
+  /* Green background for user messages */
+  color: #fff;
+}
+
+.message.left .text_wrapper {
+  background-color: #1e90ff;
+  /* Blue background for bot messages */
+  color: #fff;
 }
 
 /* Style for the text wrapper of user messages on the right side */
@@ -304,8 +350,9 @@ html, body {
 .text {
   font-size: 14px;
   color: #000;
-  /* Improved text visibility */
   padding: 5%;
+  word-wrap: break-word;
+  /* This will ensure text wraps and does not overflow */
 }
 
 .timestamp {
@@ -330,4 +377,5 @@ button {
   padding: 10px 15px;
   margin-left: 10px;
   cursor: pointer;
-}</style>
+}
+</style>
