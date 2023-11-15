@@ -2,11 +2,7 @@
   <div id="app">
     <!-- <AppHeader /> -->
     <router-view/>
-    <div v-if="usertype && usertype === 'student'">
-      <AppFooter/>
-    </div>
-    <div v-else>
-    </div>
+    <AppFooter/>
   </div>
 </template>
 

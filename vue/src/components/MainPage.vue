@@ -25,12 +25,12 @@
           </div>
         </div><br>
         <h2>{{ user.fname }} {{ user.lname }}</h2>
-        <div class="row">
+        <div class="row m-2 p-2">
           <div class="col text-center">
-            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-300">Mental Health Tip</button>
+            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-75" @click="positiveLiving">Positive Living Tip</button>
           </div>
           <div class="col text-center">
-            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-300">Panic Attack Tip </button>
+            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-80" @click="managingAttack">Managing Panic Attack </button>
           </div>
         </div>
       </div>
@@ -259,6 +259,12 @@ export default {
         streak,
         achievement
       };
+    },
+    positiveLiving() {
+      this.$router.push('/StayPositive');
+    },  
+    managingAttack() {
+      this.$router.push('/ManagingAttacks');
     },
   },
 };

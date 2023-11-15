@@ -63,7 +63,7 @@ export default {
   
 <style scoped>
 .help-guide {
-  font-family: 'Arial', sans-serif;
+  /* font-family: 'Arial', sans-serif; */
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
