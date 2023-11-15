@@ -15,8 +15,8 @@ import CounsellorHome from '../components/MainPageCounsellor.vue';
 const routes = [
   {
     path: '/',
-    name: 'MainPage',
-    component: MainPage
+    name: 'StudentLogin',
+    component: StudentLogin
   },
   {
     path: '/CounsellorHome',
@@ -55,9 +55,9 @@ const routes = [
     component: ProfilePage
   },
   {
-    path: '/studentLogin',
-    name: 'studentLogin',
-    component: StudentLogin
+    path: '/MainPage',
+    name: 'MainPage',
+    component: MainPage
   },
   {
     path: '/CounselorLogin',
