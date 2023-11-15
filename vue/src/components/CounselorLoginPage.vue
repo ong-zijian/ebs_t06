@@ -54,7 +54,6 @@
           sessionStorage.setItem('counselorID', user._id);
           sessionStorage.setItem('counselorFName', user.fname);
           sessionStorage.setItem('counselorLName', user.lname);
-          sessionStorage.setItem('counselorLocation', user.location);
           sessionStorage.setItem('counselorEmail', user.email);
           sessionStorage.setItem('userType', 'counselor');
   

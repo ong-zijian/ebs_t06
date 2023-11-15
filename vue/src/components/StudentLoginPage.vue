@@ -60,7 +60,7 @@ export default {
         sessionStorage.setItem('userType', 'student');
 
         // Navigate to the root URL
-        this.$router.push('/');
+        this.$router.push('/home');
       } else {
         // Handle login failure
         alert('Incorrect username or password.');

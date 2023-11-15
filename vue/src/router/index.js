@@ -10,11 +10,12 @@ import ProfilePage from '../components/ProfilePage.vue';
 import StudentLogin from '../components/StudentLoginPage.vue';
 import CounselorLogin from '../components/CounselorLoginPage.vue';
 import CounsellorHome from '../components/MainPageCounsellor.vue';
+import AdminPage from '../components/AdminPage.vue';
 
 // Define your routes
 const routes = [
   {
-    path: '/',
+    path: '/home',
     name: 'MainPage',
     component: MainPage
   },
@@ -22,6 +23,11 @@ const routes = [
     path: '/CounsellorHome',
     name: 'CounsellorHome',
     component: CounsellorHome
+  },
+  {
+    path: '/AdminPage',
+    name: 'AdminPage',
+    component: AdminPage
   },
   {
     path: '/CreateJournal',
@@ -55,7 +61,7 @@ const routes = [
     component: ProfilePage
   },
   {
-    path: '/studentLogin',
+    path: '/',
     name: 'studentLogin',
     component: StudentLogin
   },

@@ -3,38 +3,45 @@
     <header class="header">
       <!-- <button class="settings-btn"></button> -->
       <button @click="adminPage">Admin</button>
-      <h1 class="header-title">Home</h1>
+      <h1 class="header-title"><button @click="profilePage">Home</button></h1>
       <button class="logout-btn" @click="confirmLogout">Logout</button>
     </header>
-    <div class="profile-container mt-2 mb-4">
-      <div class="card shadow m-2 p-2">
-        <div class="d-flex justify-content-center align-items-center">
-          <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2"
-            style="width: 5rem; height: 5rem; font-size: 3rem;">
-            {{ fname.charAt(0) }}
-          </div>
-        </div>
-        <div class="text-center">
-          <h2>{{ fname }} {{ lname }}</h2>
-        </div>
-        <form class="form">
-          <div class="form-group row mt-3">
-            <label for="name" class="col-form-label"><strong>Email:</strong></label>
-            <div>
-              <input type="text" id="name" class="form-control" :value="email" readonly>
-            </div>
-          </div>
-        </form>
-      </div>
+    <div v-if="alerts">
       <div class="text-center p-2">
-        <h2>Appointments</h2>
+        <h2>Alerts</h2> 
       </div>
-      <div v-if="appointments">
-        <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
-          <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
-          <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
-          <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
-        </div>
+      <div v-for="alert in alerts" :key="alert._id" class="card shadow m-2 p-2 text-left">
+        <table class="table">
+          <tr>
+            <td><strong>Student Name:</strong></td>
+            <td>{{ alert.studentName }}</td>
+          </tr>
+          <tr>
+            <td><strong>Student Email:</strong></td>
+            <td>{{ alert.studentEmail }}</td>
+          </tr>
+          <tr>
+            <td><strong>Message:</strong></td>
+            <td>{{ alert.message }}</td>
+          </tr>
+          <tr>
+            <td><strong>Status:</strong></td>
+            <td>{{ alert.status }}</td>
+          </tr>
+          <tr>
+            <td>
+              <!--disable button if alert.status === "addressed"-->
+
+              <button
+                @click="address(alert._id)"
+                class="btn btn-primary bg-primary text-white"
+                :disabled="alert.status === 'addressed'"
+              >
+                Addressed?
+              </button>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
 
@@ -51,25 +58,52 @@ export default {
       fname: null,
       lname:null,
       email:null,
-      appointments: [],
+      alerts: [],
+      alertsFull:[],
     };
   },
   created() {
-    this.getAllAppointments();
+    this.getAllAlerts();
   },
   computed: {
 
   },
   methods: {
-    async getAllAppointments() {
+    async getAllAlerts() {
       this.counsellor_ID = sessionStorage.getItem('counselorID');
       this.fname = sessionStorage.getItem('counselorFName');
       this.lname = sessionStorage.getItem('counselorLName');
       this.email = sessionStorage.getItem('counselorEmail');
-      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/bookingCounsellor/' + this.counsellor_ID)
+      await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/checkStudent')
         .then(response => {
-          this.appointments = response.data;
-          console.log('appointments: ', this.appointments);
+          this.alerts = response.data;
+          console.log('alerts: ', this.alerts);
+          this.populateAlerts();
+        })
+    },
+    async populateAlerts() {
+      for (const alert of this.alerts) {
+        try {
+          const response = await axios.get('https://smu-team06-api.ede20ab.kyma.ondemand.com/student/' + alert.sid);
+          // Add response data to the alert object
+          alert.studentName = response.data.fname + " " + response.data.lname;
+          alert.studentEmail = response.data.email;
+        } catch (error) {
+          console.error('Error fetching student details:', error);
+          // Handle error, maybe set some defaults
+          alert.studentName = 'Unknown';
+          alert.studentEmail = 'Unknown';
+        }
+      }
+      // This will ensure that Vue reacts to changes in the alerts array
+      this.alerts = [...this.alerts];
+    },
+    address(objectID) {
+      axios.put('https://smu-team06-api.ede20ab.kyma.ondemand.com/checkStudent/' + objectID + "/address")
+        .then(response => {
+          console.log(response.data);
+          this.getAllAlerts();
+
         })
     },
     formatDate(dateTimeString) {
@@ -81,6 +115,9 @@ export default {
     },
     adminPage() {
       this.$router.push('/AdminPage');
+    },
+    profilePage() {
+      this.$router.push('/CounsellorHome');
     },
   },
 };
