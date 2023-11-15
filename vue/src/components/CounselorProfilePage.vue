@@ -1,15 +1,26 @@
 <template>
   <div class="profile-container">
     <div class="header">
-      <span class="header-spacer"></span>
-      <span class="header-spacer"></span>
-      <span class="header-spacer"></span>
+      <button class="settings-btn"></button>
+      <h1 class="header-title">Booking</h1>
+      <button class="logout-btn" @click="confirmLogout"></button>
+    </div>
+    <div v-if="showLogoutConfirmation" class="logout-confirmation-overlay">
+      <div class="logout-confirmation-box">
+        <p>Are you sure you want to logout?</p>
+        <button @click="logout">Yes</button>
+        <button @click="showLogoutConfirmation = false">No</button>
+      </div>
     </div>
 
     <!-- Conditionally render profile card only when counselor data is available -->
     <div v-if="counselor" class="profile-card">
       <div class="avatar-container">
-        <img :src="counselor?.photo" :alt="`Profile of ${counselor?.name}`" class="profile-photo" />
+        <!-- <img :src="counselor?.photo" :alt="`Profile of ${counselor?.name}`" class="profile-photo" /> -->
+        <div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white m-2"
+          style="width: 6.5rem; height: 6.5rem; font-size: 3rem;">
+          {{ counselor.fname.charAt(0) }}
+        </div>
       </div>
       <div class="profile-info">
         <h1 class="counselor-name">{{ counselor?.fname }} {{ counselor?.lname }}</h1>
@@ -46,7 +57,8 @@ export default {
       counselor: null,
       loading: true,
       error: null,
-      counselorID:null
+      counselorID:null,
+      showLogoutConfirmation: false,
     };
   },
   props: {
@@ -73,6 +85,14 @@ export default {
           this.loading = false;
         });
     },
+  
+    confirmLogout() {
+      this.showLogoutConfirmation = true;
+    },
+    logout() {
+      sessionStorage.clear();
+      this.$router.push('/');
+    },
   }
 };
 
@@ -96,8 +116,8 @@ export default {
 }
 
 .avatar-container {
-  width: 150px; /* Adjust the width as needed */
-  height: 150px; /* Adjust the height as needed */
+  width: 130px; /* Adjust the width as needed */
+  height: 130px; /* Adjust the height as needed */
   position: absolute;
   top: -10%; /* Set top to the bottom of the header */
   left: 50%; /* Center horizontally */
