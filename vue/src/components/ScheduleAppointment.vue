@@ -65,14 +65,14 @@ export default {
 
       try {
         const userConfirmed = await this.promptForBookingDetails(clickedDate);
-  
+        var studentID = sessionStorage.getItem("studentID");
         if (userConfirmed) {
           const bookingDetails = {
             sDateTime: localStartISO,
             eDateTime: localEndISO,
             video: "", 
             cid: this.counselorId,
-            sid: '6544938b2b6d90d7618c3647'
+            sid: studentID
           };
 
           // Post the booking details to the server

@@ -12,10 +12,10 @@
         <img :src="counselor?.photo" :alt="`Profile of ${counselor?.name}`" class="profile-photo" />
       </div>
       <div class="profile-info">
-        <h1 class="counselor-name">{{ counselor?.name }}</h1>
-        <p class="counselor-title">{{ counselor?.title }}</p>
-        <p class="counselor-description">{{ counselor?.description }}</p>
+        <h1 class="counselor-name">{{ counselor?.fname }} {{ counselor?.lname }}</h1>
         <StarRating :rating="counselor?.rating" />
+        <p class="counselor-description">{{ counselor?.description }}</p>
+        <br>
         <!-- <button class="schedule-btn" @click="scheduleAppointment">Schedule Appointment</button> -->
         <ScheduleAppointment :counselor-id="counselorId" />
       </div>
@@ -73,12 +73,6 @@ export default {
           this.loading = false;
         });
     },
-    goToSettings() {
-      // Implement your logic here
-    },
-    logout() {
-      // Implement your logic here
-    }
   }
 };
 
