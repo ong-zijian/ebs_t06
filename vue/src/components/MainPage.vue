@@ -2,12 +2,12 @@
   <div class="app-container">
     <div class="header">
       <!-- Greeting section -->
-      <div v-if="user" class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded">
+      <div v-if="user" :style="{ backgroundColor: userMessageBackgroundColor }" class="user-greeting d-flex justify-content-between align-items-center p-3 bg-light rounded">
         <div class="greeting-text">
           <span class="hello-text text-secondary">Hello,</span>
           <h3 class="mb-0">{{ user.fname }}</h3>
         </div>
-        <div class="user-avatar d-flex justify-content-center align-items-center bg-primary text-white rounded-circle m-2"
+        <div :style="{ backgroundColor: userMessageBackgroundColor }" class="user-avatar d-flex justify-content-center align-items-center bg-primary text-white rounded-circle m-2"
           style="width: 3rem; height: 3rem; font-size: 1.5rem;">
           {{ user?.fname.charAt(0) }}
         </div>
@@ -25,6 +25,14 @@
           </div>
         </div><br>
         <h2>{{ user.fname }} {{ user.lname }}</h2>
+        <div class="row m-2 p-2">
+          <div class="col text-center">
+            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-75" @click="positiveLiving">Positive Living Tip</button>
+          </div>
+          <div class="col text-center">
+            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-80" @click="managingAttack">Managing Panic Attack </button>
+          </div>
+        </div>
       </div>
 
       <!-- Emotion score section -->
@@ -33,6 +41,16 @@
         <h2 class="text-center">Your Latest Emotion Score</h2>
         <h2 class="text-center">{{ plotData.datasets[0].data[plotData.datasets[0].data.length-1] }}</h2>
         <p class="text-center">{{ userMessage }}</p>
+      </div>
+
+      <div class="m-2 p-2 text-center">
+        <h2 class="text-center">Your Streak:</h2>
+        <span v-if="calculateStreak() >= 3" :style="{ backgroundColor: userMessageBackgroundColor }" class="badge py-2 px-4 my-2 d-inline-block fs-3">{{ calculateStreak() }} days 🔥</span>
+        <div class="progress my-3" style="height: 35px;">
+          <div class="progress-bar" role="progressbar" :style="{ width: streakPercentage + '%', backgroundColor: userMessageBackgroundColor  }" :aria-valuenow="calculateStreak()" aria-valuemin="0" aria-valuemax="30">
+            {{ calculateStreak() }} / 30 days
+          </div>
+        </div>
       </div>
 
       <!-- Journal entries -->
@@ -133,6 +151,12 @@ export default {
       }
       return []; // Return an empty array if journalMessages.journal is undefined
     },
+    currentStreak() {
+      return this.calculateStreak();
+    },
+    streakPercentage() {
+      return (this.calculateStreak() / 30) * 100;
+    },
 
   },
   methods: {
@@ -168,6 +192,79 @@ export default {
         this.plotData.datasets[0].data = scoresToPlot.map(entry => entry.score * 5);
         console.log("plot data:", this.plotData);
       }
+    },
+
+    calculateStreak() {
+      // Assuming journalMessages are already sorted by date in ascending order
+      // If not, sort them first
+      if (!this.journalMessages || !Array.isArray(this.journalMessages.journal)) {
+        return 0;
+      }
+
+      const entries = this.journalMessages.journal;
+      const today = new Date().setHours(0, 0, 0, 0);
+      let streak = 0;
+      let previousDate = new Date(today);
+
+      for (let i = entries.length - 1; i >= 0; i--) {
+        const entryDate = new Date(entries[i].date).setHours(0, 0, 0, 0);
+        const timeDiff = previousDate - entryDate;
+        const dayDiff = timeDiff / (1000 * 3600 * 24);
+
+        if (dayDiff === 1) {
+          // Consecutive day
+          streak++;
+        } else if (dayDiff > 1) {
+          // Break in streak
+          break;
+        }
+
+        previousDate = new Date(entryDate);
+      }
+
+      if (this.journalMessages && this.journalMessages.journal && this.journalMessages.journal.length > 0) {
+        const lastEntry = this.journalMessages.journal[this.journalMessages.journal.length - 1];
+        // Parse the date string to ensure it's a valid Date object
+        const lastEntryDate = new Date(lastEntry.date);
+
+        // Check if the date string was valid and lastEntryDate is a Date object
+        if (!isNaN(lastEntryDate.getTime())) {
+          // Compare dates without time
+          const lastEntryDay = new Date(lastEntryDate.setHours(0, 0, 0, 0));
+          const today = new Date().setHours(0, 0, 0, 0);
+
+          if (lastEntryDay.getTime() === today) {
+            streak++;
+          }
+        } else {
+          console.error('Invalid date in last journal entry:', lastEntry.date);
+        }
+      }
+
+      return streak;
+    },
+    getStreakAchievement() {
+      const streak = this.calculateStreak();
+      let achievement = '';
+
+      if (  streak >= 30) {
+        achievement = '1 month streak! Amazing!';
+      } else if (streak >= 7) {
+        achievement = '1 week streak! Keep going!';
+      } else if (streak >= 3) {
+        achievement = '3 days streak! Nice start!';
+      }
+
+      return {
+        streak,
+        achievement
+      };
+    },
+    positiveLiving() {
+      this.$router.push('/StayPositive');
+    },  
+    managingAttack() {
+      this.$router.push('/ManagingAttacks');
     },
   },
 };
