@@ -32,6 +32,7 @@ students_collection = db['student']
 counsellors_collection = db['counsellor']
 bookings_collection = db['booking']
 emotion_collection = db['emotion']
+alert_collection = db['checkStudent']
 
 # Sentiment analysis classes
 sid = SentimentIntensityAnalyzer()
