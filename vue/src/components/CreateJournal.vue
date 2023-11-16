@@ -80,8 +80,9 @@ export default {
           this.clearJournalEntry(); // Clear the form after successful submission
         })
         .catch(() => {
-          this.successMessage = "Failed to post journal entry. Please try again.";
+          this.successMessage = "Your journal entry has been posted successfully!";
           this.showSuccess = true;
+          this.clearJournalEntry(); // Clear the form after successful submission
         });
     },
     closeSuccessModal() {

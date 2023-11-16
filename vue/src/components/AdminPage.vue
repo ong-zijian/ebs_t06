@@ -43,6 +43,13 @@
     </div>
 
   </div>
+  <div v-if="showLogoutConfirmation" class="logout-confirmation-overlay">
+    <div class="logout-confirmation-box">
+      <p>Are you sure you want to logout?</p>
+      <button @click="logout">Yes</button>
+      <button @click="showLogoutConfirmation = false">No</button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -57,6 +64,7 @@ export default {
       email: null,
       alerts: [],
       alertsFull: [],
+      showLogoutConfirmation: false,
     };
   },
   created() {
@@ -114,6 +122,10 @@ export default {
     },
     confirmLogout() {
       this.showLogoutConfirmation = true;
+    },
+    logout() {
+      sessionStorage.clear();
+      this.$router.push('/');
     },
     adminPage() {
       this.$router.push('/AdminPage');
@@ -225,5 +237,36 @@ body {
   /* Centers vertically */
   height: 100%;
   /* Takes up the full height of the viewport */
+}
+
+.logout-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.logout-confirmation-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.logout-confirmation-box button {
+  margin: 10px;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
 }
 </style>
