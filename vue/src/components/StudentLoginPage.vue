@@ -16,9 +16,18 @@
         <div class="register-link">
           You're a counselor? <router-link to="/CounselorLogin" active-class="active-link">Click Here</router-link>
         </div>
+        <div class="consent-group">
+          <label>
+            <input type="checkbox" v-model="consentChecked" class="checkeddata">
+            <span>I agree to share my data</span>
+          </label>
+        </div>
         <button type="submit">LOGIN</button>
       </form>
     </div>
+  </div>
+  <div class="alert" ref="alert">
+    Please check the consent box before logging in or enter correct username/password.
   </div>
 </template>
 
@@ -50,7 +59,7 @@ export default {
     },
     login() {
       const user = this.students.find(student => student.email === this.credentials.email);
-      if (user && user.password === this.credentials.password) {
+      if (user && user.password === this.credentials.password && this.consentChecked) {
         // Perform login action
         this.loginSuccessful = true;
 
@@ -67,10 +76,18 @@ export default {
         this.$router.push('/home');
       } else {
         // Handle login failure
-        alert('Incorrect username or password.');
+        this.showAlert();
       }
-    }
-  }
+    },
+    showAlert() {
+    const alertElement = document.querySelector('.alert');
+    alertElement.style.display = 'block';
+    setTimeout(() => {
+      alertElement.style.display = 'none';
+    }, 5000); // Hide the alert after 5 seconds, adjust as needed
+  },
+  
+}
 };
 </script>
 
@@ -127,4 +144,39 @@ button {
 button:hover {
   background: #333;
 }
+
+.consent-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+span {
+  margin-left: -140px; /* Adjust this value to your preference */
+  align-self: flex-start; /* Align to the top of the label */
+
+}
+
+.checkeddata{
+  margin-left: -150px; 
+}
+
+.alert {
+  position: fixed;
+  margin-top: 2%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff5252; /* Red color, adjust as needed */
+  color: #fff;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: none;
+}
+
 </style>
