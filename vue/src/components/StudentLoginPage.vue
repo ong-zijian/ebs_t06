@@ -1,6 +1,10 @@
 <template>
   <div class="container">
     <div class="login-container">
+      <div class="  text-center">
+        <img src="../assets/aichatbot.png" alt="MindSculpt Logo" class="w-50 h-50">
+        <h1>MindSculpt</h1>
+      </div>
       <h1>STUDENT SIGN IN</h1>
       <form @submit.prevent="login">
         <div class="input-group">

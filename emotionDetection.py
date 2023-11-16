@@ -6,6 +6,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+from textblob import TextBlob
 
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
@@ -395,13 +396,17 @@ def add_emotion_journal_entry():
         # Preprocess and analyze the sentiment of the description
         preprocessed_text = preprocess_text(description)
         sentiment_scores = sid.polarity_scores(preprocessed_text)
-        compound_score = sentiment_scores['compound']
+        #compound_score = sentiment_scores['compound']
+
+        combined = title + description
+        blob = TextBlob(combined)
+        sentiment = blob.sentiment
 
         # Prepare the journal entry
         current_date = datetime.now().date().isoformat()
         score_entry = {
             "date": current_date,
-            "score": compound_score
+            "score": sentiment.polarity
         }
         journal_entry = {
             "title": title,
