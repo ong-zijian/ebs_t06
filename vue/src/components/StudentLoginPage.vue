@@ -218,7 +218,9 @@ span {
   padding: 20px;
   border: 1px solid #ccc;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
-  color: #333; 
+  color: #333;
+  width: 80%; /* Adjust this value to control the width of the alert */
+  max-width: 600px; /* Optional: sets a maximum width for larger screens */
 }
 
 .notification-modal button {
