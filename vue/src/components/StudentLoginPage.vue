@@ -18,9 +18,13 @@
         </div>
         <div class="consent-group">
           <label>
-            <input type="checkbox" v-model="consentChecked" class="checkeddata">
+            <input type="checkbox" v-model="consentChecked" class="checkeddata" @change="handleConsentChange">
             <span>I agree to share my data</span>
           </label>
+        </div>
+        <div v-if="showNotificationModal" class="notification-modal">
+          <span v-html="notificationContent"></span>
+          <button @click="hideNotificationModal">Close</button>
         </div>
         <button type="submit">LOGIN</button>
       </form>
@@ -43,6 +47,9 @@ export default {
         password: '',
       },
       loginSuccessful: false,
+      consentChecked: false,
+      showNotificationModal: false,
+      notificationContent: "",
     };
   },
   created() {
@@ -86,6 +93,29 @@ export default {
       alertElement.style.display = 'none';
     }, 5000); // Hide the alert after 5 seconds, adjust as needed
   },
+  handleConsentChange() {
+    if (this.consentChecked) {
+      // Set notification content
+      this.notificationContent = `
+        <div>
+          <h2>PDPA Consent for User Data</h2>
+          <p>
+            By proceeding to use this web application, you acknowledge and consent to the collection and processing of your personal data for the sole purpose of studying and improving user mental wellness. Your data will be handled with the utmost confidentiality and used exclusively to enhance our algorithm, providing you with a more personalized and effective experience.
+          </p>
+          <p>
+            We adhere to the principles of the Personal Data Protection Act (PDPA) and assure you that your information will not be shared with third parties without your explicit consent.
+          </p>
+        </div>
+      `;
+
+      // Show the notification modal
+      this.showNotificationModal = true;
+    }
+  },
+  hideNotificationModal() {
+    // Hide the notification modal
+    this.showNotificationModal = false;
+  },
   
 }
 };
@@ -124,7 +154,7 @@ input {
   margin: 0; /* Removes default margin */
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-sizing: border-box; /* Includes padding and border in the element's width and height */
+  box-sizing: border-box; 
 }
 
 .register-link {
@@ -155,8 +185,8 @@ label {
 }
 
 span {
-  margin-left: -140px; /* Adjust this value to your preference */
-  align-self: flex-start; /* Align to the top of the label */
+  margin-left: -140px; 
+  align-self: flex-start; 
 
 }
 
@@ -170,7 +200,7 @@ span {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #ff5252; /* Red color, adjust as needed */
+  background-color: #ff5252; 
   color: #fff;
   padding: 1rem;
   border-radius: 5px;
@@ -178,5 +208,30 @@ span {
   text-align: center;
   display: none;
 }
+/* PDPA Notification */
+.notification-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f0f0f0; 
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
+  color: #333; 
+}
 
+.notification-modal button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #555; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.notification-modal button:hover {
+  background-color: #FF8C00;
+}
 </style>
