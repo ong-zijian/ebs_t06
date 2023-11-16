@@ -27,10 +27,10 @@
         <h2>{{ user.fname }} {{ user.lname }}</h2>
         <div class="row m-2 p-2">
           <div class="col text-center">
-            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-75" @click="positiveLiving">Positive Living Tip</button>
+            <button class="btn text-white fw-bold w-75 bg-primary" @click="positiveLiving">Positive Living Tip</button>
           </div>
           <div class="col text-center">
-            <button :style="{ backgroundColor: userMessageBackgroundColor }" class="btn text-white fw-bold w-80" @click="managingAttack">Managing Panic Attack </button>
+            <button class="btn text-white fw-bold w-80 bg-primary" @click="managingAttack">Managing Panic Attack </button>
           </div>
         </div>
       </div>
@@ -45,9 +45,9 @@
 
       <div class="m-2 p-2 text-center">
         <h2 class="text-center">Your Streak:</h2>
-        <span v-if="calculateStreak() >= 3" :style="{ backgroundColor: userMessageBackgroundColor }" class="badge py-2 px-4 my-2 d-inline-block fs-3">{{ calculateStreak() }} days 🔥</span>
+        <span v-if="calculateStreak() >= 3" class="badge py-2 px-4 my-2 d-inline-block fs-3 bg-primary">{{ calculateStreak() }} days 🔥</span>
         <div class="progress my-3" style="height: 35px;">
-          <div class="progress-bar" role="progressbar" :style="{ width: streakPercentage + '%', backgroundColor: userMessageBackgroundColor  }" :aria-valuenow="calculateStreak()" aria-valuemin="0" aria-valuemax="30">
+          <div class="progress-bar bg-primary" role="progressbar" :aria-valuenow="calculateStreak()" aria-valuemin="0" aria-valuemax="30">
             {{ calculateStreak() }} / 30 days
           </div>
         </div>
@@ -189,7 +189,7 @@ export default {
 
         // Update plotData with the scores and dates
         this.plotData.labels = scoresToPlot.map(entry => entry.date);
-        this.plotData.datasets[0].data = scoresToPlot.map(entry => entry.score * 5);
+        this.plotData.datasets[0].data = scoresToPlot.map(entry => Math.round((entry.score * 5) * 100) / 100);
         console.log("plot data:", this.plotData);
       }
     },
