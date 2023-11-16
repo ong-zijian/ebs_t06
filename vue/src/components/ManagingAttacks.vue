@@ -1,6 +1,7 @@
 <template>
   <div id="app" class="help-guide">
     <header class="header">
+      <button @click="goBack" class="back-button">← Back</button> <!-- Back button added here -->
       <h1>Managing Panic Attacks</h1>
       <p>A step-by-step guide to help you through the moments of panic.</p>
     </header>
@@ -52,6 +53,11 @@
 <script>
 export default {
   name: 'App',
+  methods: {
+    goBack() {
+      this.$router.go(-1); // Or this.$router.back();
+    }
+  },
   data() {
     return {
       panicAttackTipsImage: require('@/assets/panicattack.png'),
@@ -72,19 +78,33 @@ export default {
 .section-poster {
   width: 100%;
   height: auto;
-  margin-bottom: 20px; /* Add some space between the image and text */
+  margin-bottom: 20px;
+  /* Add some space between the image and text */
 }
 
 .header {
+  position: relative; /* Needed for absolute positioning of children */
   text-align: center;
-  /* or left, if preferred */
   padding: 20px;
+  padding-left: 60px; /* Add padding to make room for the back button */
   background-color: #0056b3;
-  /* A calming blue */
   color: white;
-  /* Ensures readability */
   border-bottom: 1px solid #ddd;
 }
+
+.back-button {
+  position: absolute; /* Position the button within the header */
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%); /* Center it vertically */
+  background: none;
+  border: none;
+  color: white; /* Adjust color to match your header */
+  font-size: 1em;
+  padding: 10px;
+  cursor: pointer;
+}
+
 
 .header h1 {
   font-size: 2em;
@@ -121,7 +141,8 @@ export default {
   margin-top: 20px;
   padding: 10px;
   background-color: #f4f4f4;
-  margin-bottom: 50px; /* This creates space below the footer */
+  margin-bottom: 50px;
+  /* This creates space below the footer */
 }
 </style>
   

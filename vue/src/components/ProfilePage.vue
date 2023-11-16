@@ -33,11 +33,18 @@
         </div>
       </form>
     </div>
-    <div>
-      <h2>Appointments</h2>
+    <div v-if="upcomingAppointments.length > 0">
+      <h2>Upcoming Appointments</h2>
+      <div v-for="appointment in upcomingAppointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
+        <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
+        <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
+        <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
+      </div>
     </div>
-    <div v-if="appointments">
-      <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
+
+    <div v-if="pastAppointments.length > 0">
+      <h2>Past Appointments</h2>
+      <div v-for="appointment in pastAppointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
         <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
         <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
         <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
@@ -61,12 +68,14 @@ export default {
   name: 'CounselorProfile',
   data() {
     return {
-      studentId: "6544938b2b6d90d7618c3647",
+      studentId: "",
       student: null,
       appointments: null,
       loading: true,
       error: null,
       showLogoutConfirmation: false,
+      upcomingAppointments: [],
+      pastAppointments: [],
     };
   },
   created() {
@@ -91,20 +100,21 @@ export default {
         });
     },
     fetchAppointments() {
+      const now = new Date();
       var studentID = sessionStorage.getItem("studentID");
       axios.get(`https://smu-team06-api.ede20ab.kyma.ondemand.com/bookingStudent/` + studentID)
         .then(response => {
           // Assuming `response.data` is an array of appointments
-          this.appointments = response.data.sort((a, b) => {
-            // Convert the start times to Date objects and compare them
-            return new Date(a.sDateTime) - new Date(b.sDateTime);
-          });
-          console.log('Appointments:', this.appointments)
+          this.appointments = response.data;
+          this.upcomingAppointments = this.appointments.filter(appointment => new Date(appointment.sDateTime) > now);
+          this.pastAppointments = this.appointments.filter(appointment => new Date(appointment.sDateTime) <= now);
+          console.log('Upcoming Appointments:', this.upcomingAppointments);
+          console.log('Past Appointments:', this.pastAppointments);
           this.loading = false;
         })
         .catch(error => {
           console.error('Error fetching appointments:', error);
-          this.error = 'Failed to load the appointments.'; // Set the error variable here
+          this.error = 'Failed to load the appointments.';
           this.loading = false;
         });
     },

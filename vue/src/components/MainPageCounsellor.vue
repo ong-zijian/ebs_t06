@@ -2,7 +2,7 @@
   <div>
     <header class="header">
       <!-- <button class="settings-btn"></button> -->
-      <button @click="adminPage">Admin</button>
+      <button @click="adminPage">Alerts</button>
       <h1 class="header-title">Home</h1>
       <button class="logout-btn" @click="confirmLogout">Logout</button>
     </header>
@@ -26,11 +26,19 @@
           </div>
         </form>
       </div>
+
       <div class="text-center p-2">
-        <h2>Appointments</h2>
+        <h2>Upcoming Appointments</h2>
+        <div v-for="appointment in upcomingAppointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
+          <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
+          <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
+          <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
+        </div>
       </div>
-      <div v-if="appointments">
-        <div v-for="appointment in appointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
+
+      <div class="text-center p-2">
+        <h2>Past Appointments</h2>
+        <div v-for="appointment in pastAppointments" :key="appointment._id" class="card shadow m-2 p-2 text-left">
           <p><strong>Start Time:</strong> {{ formatDate(appointment.sDateTime) }}</p>
           <p><strong>End Time:</strong> {{ formatDate(appointment.eDateTime) }}</p>
           <p><strong>Link:</strong> <a :href="appointment.video" target="_blank">{{ appointment.video }}</a></p>
@@ -38,6 +46,15 @@
       </div>
     </div>
 
+  </div>
+  <div v-if="showLogoutConfirmation" class="modal-overlay">
+    <div class="modal-container">
+      <p>Are you sure you want to logout?</p>
+      <div class="modal-button-container">
+        <button @click="logout">Yes</button>
+        <button @click="cancelLogout">No</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -49,16 +66,24 @@ export default {
     return {
       counsellor_ID: null,
       fname: null,
-      lname:null,
-      email:null,
+      lname: null,
+      email: null,
       appointments: [],
+      showLogoutConfirmation: false,
     };
   },
   created() {
     this.getAllAppointments();
   },
   computed: {
-
+    upcomingAppointments() {
+      const now = new Date();
+      return this.appointments.filter(appointment => new Date(appointment.sDateTime) > now);
+    },
+    pastAppointments() {
+      const now = new Date();
+      return this.appointments.filter(appointment => new Date(appointment.sDateTime) <= now);
+    },
   },
   methods: {
     async getAllAppointments() {
@@ -78,6 +103,14 @@ export default {
     },
     confirmLogout() {
       this.showLogoutConfirmation = true;
+    },
+    logout() {
+      sessionStorage.clear();
+      this.$router.push('/CounselorLogin'); // Replace '/login' with your actual login route
+      this.showLogoutConfirmation = false;
+    },
+    cancelLogout() {
+      this.showLogoutConfirmation = false;
     },
     adminPage() {
       this.$router.push('/AdminPage');
@@ -186,5 +219,52 @@ body {
   /* Centers vertically */
   height: 100%;
   /* Takes up the full height of the viewport */
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* High z-index to be on top of other content */
+}
+
+.modal-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  /* Ensure it's above the overlay */
+}
+
+.modal-button-container {
+  display: flex;
+  justify-content: space-between;
+  /* This will place one button at each end */
+}
+
+.modal-container button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  /* Add some space above the buttons */
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  flex: 1;
+  /* This makes the buttons take up equal space */
+}
+
+.modal-container button {
+  max-width: 100px;
+  /* Adjust as needed */
 }
 </style>

@@ -11,7 +11,7 @@
     <div v-if="user">
       <section class="user-profile">
         <div class="avatar-container">
-          <img :src="avatar" :alt="user.fname" class="user-avatar" />
+          <div class="user-avatar">{{ user.fname.charAt(0) }}</div>
         </div>
         <h2 class="user-name">{{ user.fname }} {{ user.lname }}</h2>
         <p class="user-location">{{ user.location }}</p>
@@ -31,7 +31,6 @@
         <button @click="closeSuccessModal">OK</button>
       </div>
     </div>
-
     <!-- Footer -->
     <footer>
       <button class="cancel-btn" @click="goBack">Go Back</button>
@@ -61,7 +60,7 @@ export default {
   created() {
     this.userProfile();
     const studentID = sessionStorage.getItem("studentID");
-    console.log('sid:',studentID);
+    console.log('sid:', studentID);
   },
   methods: {
     userProfile() {
@@ -156,10 +155,18 @@ footer {
 
 .user-avatar {
   width: 100%;
-  height: auto;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5rem;
+  /* You can adjust this as needed */
+  background-color: #007bff;
+  /* This is your circle color */
+  color: white;
   border-radius: 50%;
-  /* Update this to match the desired border-radius */
-  /* Add any additional styling here for the avatar image */
+  line-height: 1;
+  /* Ensures that the text has no extra line height */
 }
 
 .user-name {

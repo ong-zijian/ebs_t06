@@ -1,6 +1,7 @@
 <template>
     <div id="app" class="documentation-style">
         <header class="header">
+            <button @click="goBack" class="back-button">← Back</button> <!-- Back button added here -->
             <h1>Stay Positive & Destress</h1>
             <p>Welcome to your guide on staying positive and managing stress.</p>
         </header>
@@ -43,6 +44,11 @@
 <script>
 export default {
   name: 'App',
+  methods: {
+    goBack() {
+      this.$router.go(-1); // Or this.$router.back();
+    }
+  },
   data() {
     return {
         destressTipsImage: require('@/assets/destress.png'),
@@ -112,6 +118,29 @@ h2 {
 
 section {
     margin-bottom: 2em;
+}
+
+.header {
+  position: relative; /* Needed for absolute positioning of children */
+  text-align: center;
+  padding: 20px;
+  padding-left: 60px; /* Add padding to make room for the back button */
+  background-color: #0056b3;
+  color: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.back-button {
+  position: absolute; /* Position the button within the header */
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%); /* Center it vertically */
+  background: none;
+  border: none;
+  color: white; /* Adjust color to match your header */
+  font-size: 1em;
+  padding: 10px;
+  cursor: pointer;
 }
 
 </style>

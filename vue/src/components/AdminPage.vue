@@ -2,13 +2,13 @@
   <div>
     <header class="header">
       <!-- <button class="settings-btn"></button> -->
-      <button @click="adminPage">Admin</button>
+      <button @click="goBack">Back</button>
       <h1 class="header-title"><button @click="profilePage">Home</button></h1>
       <button class="logout-btn" @click="confirmLogout">Logout</button>
     </header>
     <div v-if="alerts">
       <div class="text-center p-2">
-        <h2>Alerts</h2> 
+        <h2>Alerts</h2>
       </div>
       <div v-for="alert in alerts" :key="alert._id" class="card shadow m-2 p-2 text-left">
         <table class="table">
@@ -32,11 +32,8 @@
             <td>
               <!--disable button if alert.status === "addressed"-->
 
-              <button
-                @click="address(alert._id)"
-                class="btn btn-primary bg-primary text-white"
-                :disabled="alert.status === 'addressed'"
-              >
+              <button @click="address(alert._id)" class="btn btn-primary bg-primary text-white"
+                :disabled="alert.status === 'addressed'">
                 Addressed?
               </button>
             </td>
@@ -56,10 +53,10 @@ export default {
     return {
       counsellor_ID: null,
       fname: null,
-      lname:null,
-      email:null,
+      lname: null,
+      email: null,
       alerts: [],
-      alertsFull:[],
+      alertsFull: [],
     };
   },
   created() {
@@ -97,6 +94,11 @@ export default {
       }
       // This will ensure that Vue reacts to changes in the alerts array
       this.alerts = [...this.alerts];
+    },
+    goBack() {
+      this.$router.go(-1); // This will take you one step back in the browser history
+      // Alternatively, you can use:
+      // this.$router.back();
     },
     address(objectID) {
       axios.put('https://smu-team06-api.ede20ab.kyma.ondemand.com/checkStudent/' + objectID + "/address")

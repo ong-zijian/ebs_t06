@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <!-- <AppHeader /> -->
-    <router-view/>
-    <AppFooter/>
+    <router-view />
+    <AppFooter v-if="showFooter" />
   </div>
 </template>
 
@@ -20,9 +20,20 @@ export default {
       usertype: null,
     };
   },
+  computed: {
+    showFooter() {
+      // The footer will show only if usertype is explicitly 'student'
+      return this.usertype === 'student';
+    }
+  },
+  watch: {
+    '$route'() {
+      this.usertype = sessionStorage.getItem('userType');
+    }
+  },
   created() {
     this.usertype = sessionStorage.getItem('userType');
-  }
-
+    console.log('User Type:', this.usertype); // Debug: Check the retrieved user type
+  },
 };
 </script>
